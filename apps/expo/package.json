@@ -1,5 +1,5 @@
 {
-  "name": "pincast-expo",
+  "name": "expo",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@logto/nuxt": "latest",
-    "@nuxt/postgres": "latest",
+    "@vercel/postgres": "latest",
     "@pinia/nuxt": "latest",
     "nuxt-icon": "latest",
     "unocss": "latest"

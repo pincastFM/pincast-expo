@@ -1,55 +1,78 @@
 # Pincast Expo Project Context
 
 ## Project Overview
-You are tasked with helping create a new project called "pincast-expo" (in its own GitHub repository) that will build a capability for the Pincast platform that allows vibe coders to publish their apps to the Pincast marketplace (pincast.fm). This project should:
+You are tasked with helping create the "pincast-expo" project that enables Cursor VS Code users to build, test, and publish full-stack location-based experiences that plug natively into the Pincast platform. The new approach uses an SDK, CLI, and VS Code extension to provide a streamlined developer experience with just two commands:
 
+```
+⌘⇧P  »  Pincast: Enable Expo   # scaffolds SDK & auth
+pincast deploy                # builds + registers app (state=pending)
+```
+
+This project should:
 1. Be built in its own repository (named "pincast-expo")
 2. Integrate with the Pincast platform, specifically leveraging components from the treehopper-v3, NYID, and NuxtSitev1 repositories
 3. Ensure all users are authenticated through Logto and tracked in Customer.io
 
-## Repository Structure
-The CLAUDE.md technical documentation file has been created and will live in the new pincast-expo repository. It contains comprehensive technical information about the three referenced repositories and their integration points.
+## Spec Highlights (v2)
 
-## Existing Repositories Analysis
+### Pincast Expo — Revised Specification (Cursor‑first SDK)
 
-### NuxtSitev1
-A minimal landing page for Pincast (pincast.fm) serving as the marketing entry point. Built with Nuxt 3 and Tailwind CSS.
+*Version 2 • 2025‑04‑20*
 
-### NYID
-A location-based audio experience platform with:
-- Nuxt 3 framework
-- Logto authentication
-- Customer.io analytics
-- Mapbox integration
-- Vercel Postgres database
-- Content creation and sharing (audio treks, private pins)
+**Baseline accomplished so far (Tickets #1 ‑ #3):** repo scaffold on Nuxt 3 + Tailwind, Logto RBAC middleware, and Vercel Postgres + PostGIS schema are already merged on `main`. Spec v2 builds on that foundation; no previously delivered code is discarded. Existing database tables (`users`, `apps`, `versions`, …) stay intact and are consumed by the new SDK/CLI pipeline.
 
-### treehopper-v3
-A location-based tree collection application with:
-- Nuxt 3 framework
-- Logto authentication
-- Customer.io analytics
-- Mapbox integration
-- Vercel Postgres database
+### Components
 
-## Technical Stack Foundation
-The existing codebase uses:
-- **Framework**: Nuxt 3 (Vue 3)
-- **Authentication**: Logto
-- **Analytics**: Customer.io
-- **Map Services**: Mapbox
-- **Database**: Vercel Postgres
-- **Deployment**: Vercel
+| Layer                                 | Artifact                    | Responsibility                                                                             |
+| ------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------ |
+| **Cursor extension** (`pincast-expo`) | VS‑Code marketplace package | • Palette commands (`Enable`, `Publish`)  • Writes config & env • Calls CLI                |
+| `@pincast/sdk`                        | NPM package (Nuxt3)         | • Logto auth wrapper  • `usePincastLocation`, `usePincastData`, `useAnalytics` composables |
+| **CLI**                               | Binary published via pkg    | • Local dev proxy  • Build+deploy to Pincast Vercel org  • Register app via REST           |
+| **Expo API** (`POST /ci/apps`)        | Edge function               | • Accept build hash + metadata → write to `apps` + first `versions` row (`state=pending`)  |
+| **Staff dashboard**                   | Nuxt page `/review`         | • Approve / reject / hide                                                                  |
+| **Marketplace catalog**               | Public API `/catalog`       | • Geo‑filtered list for players                                                            |
 
-## Authentication System
-All applications use Logto with the following flow:
-1. User clicks "Sign in with Logto" button
-2. Redirected to Logto authentication service
-3. After authentication, redirected back to the application
-4. Auth middleware checks user status
-5. User ID synchronized with Customer.io for analytics
+### Developer Flow
 
-Machine-to-Machine (M2M) Authentication is used for protected API operations.
+1. **Install extension** or run `npm i -g pincast && pincast init`.
+2. Command *Enable* →
+   - Adds `@pincast/sdk` & Pinia if missing.
+   - Generates `pincast.json` (title, geo, hero).
+   - Writes `.env.pincast` with Logto + Customer.io keys fetched via OAuth device flow.
+3. Dev codes using Cursor prompts; SDK composables handle storage & auth.
+4. *Publish* command → CLI:
+   - Runs Nuxt `build`, uploads assets to Pincast Vercel org (bucket per app).
+   - Calls `POST /ci/apps` with build URL, metadata, token.
+   - Response shows dashboard link (pending).
+5. Staff approves → app visible in catalog; players authenticate once via Logto and play.
+
+### Auth & Data
+
+- **Auth**: same Logto tenant; SDK exchanges player ID token for scoped App token (JWT `aud=app:{id}`) to call Data API.
+- **Data API**: REST routes `/data/{collection}` auto‑namespaced per app.
+- **Storage**: key‑value + GeoJSON blob backed by Postgres (JSONB + PostGIS).
+- **Analytics**: SDK pipes events to Customer.io with `app_id` & `player_id`.
+
+### CLI Commands
+
+```bash
+pincast init            # clone starter, set env
+pincast dev             # start Nuxt + local proxy (Port 8787)
+pincast deploy [--prod] # build, upload, register version
+pincast login           # device‑flow OAuth to get dev token
+```
+
+### Authentication Roles
+
+The application uses a role-based access control system with three roles:
+
+| Role | Description | Access Level |
+|------|-------------|--------------|
+| `player` | Default role for all users | Can browse and install apps |
+| `developer` | App developers | All player rights + submit/manage apps |
+| `staff` | Pincast staff | All rights + approve/reject/rollback apps |
+
+Roles are managed through Logto claims. The SDK handles token exchange for scoped app access.
 
 ## Important Instructions for Project Development
 
@@ -66,20 +89,10 @@ Machine-to-Machine (M2M) Authentication is used for protected API operations.
    - Ask the user to clarify before proceeding
 
 3. **FOCUS PRIMARILY ON**:
-   - Designing a system that allows vibe coders to publish apps to the Pincast marketplace
-   - Ensuring all users are authenticated through Logto.io
+   - Implementing the Cursor-first SDK, CLI, and VS Code extension workflow
+   - Ensuring all users are authenticated through Logto with proper token exchange
    - Maintaining Customer.io integration for analytics
-   - Creating a clean, maintainable codebase in the new pincast-expo repository
-
-4. **AUTHENTICATION REQUIREMENTS**:
-   - All users MUST be authenticated through Logto
-   - User accounts MUST be tracked in Customer.io
-   - Consider both end-users and developer accounts
-
-5. **CONTENT REQUIREMENTS**:
-   - The system should allow for app publication and management
-   - Apps should appear in the Pincast marketplace (pincast.fm)
-   - Consider approval workflows and validation
+   - Creating a clean, maintainable codebase in the pincast-expo repository
 
 When crafting prompts for Claude Code, ensure they:
 1. Are precise and specific

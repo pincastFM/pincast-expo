@@ -5,10 +5,10 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "pnpm run --filter pincast-expo dev",
-    "build": "pnpm run --filter pincast-expo build",
-    "lint": "pnpm run --filter pincast-expo lint",
-    "typecheck": "pnpm run --filter pincast-expo typecheck",
+    "dev": "pnpm run --filter expo dev",
+    "build": "pnpm run --filter expo build",
+    "lint": "pnpm run --filter expo lint",
+    "typecheck": "pnpm run --filter expo typecheck",
     "prepare": "husky install"
   },
   "devDependencies": {

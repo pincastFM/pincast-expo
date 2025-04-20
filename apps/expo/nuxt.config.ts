@@ -6,8 +6,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@logto/nuxt',
     'nuxt-icon',
-    'unocss',
-    '@nuxt/postgres'
+    'unocss'
   ],
   // Set default runtime to edge
   nitro: {

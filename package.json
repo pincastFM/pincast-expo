@@ -2,18 +2,36 @@
   "name": "pincast-expo",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/sdk",
+    "packages/cli",
+    "packages/extension",
+    "packages/docs"
   ],
   "scripts": {
     "dev": "pnpm run --filter expo dev",
-    "build": "pnpm run --filter expo build",
+    "dev:docs": "pnpm run --filter @pincast/docs dev",
+    "build": "pnpm build -r",
+    "build:docs": "pnpm run --filter @pincast/docs generate",
     "lint": "pnpm run --filter expo lint",
     "typecheck": "pnpm run --filter expo typecheck",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "pnpm test -r",
+    "test:sdk": "pnpm run --filter @pincast/sdk test",
+    "test:extension": "pnpm run --filter pincast-expo test",
+    "test:watch": "pnpm run --filter expo test:watch",
+    "test:e2e": "pnpm run --filter expo test:e2e",
+    "cypress:open": "pnpm run --filter expo cypress:open",
+    "db:generate": "pnpm run --filter expo db:generate",
+    "db:migrate": "pnpm run --filter expo db:migrate",
+    "db:studio": "pnpm run --filter expo db:studio",
+    "db:seed": "pnpm run --filter expo db:seed"
   },
   "devDependencies": {
+    "@types/uuid": "^10.0.0",
     "husky": "latest",
-    "lint-staged": "latest"
+    "lint-staged": "latest",
+    "uuid": "^11.1.0"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [

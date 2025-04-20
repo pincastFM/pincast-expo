@@ -110,4 +110,15 @@ Returns `{ "appId": "uuid", "dashboard": "https://expo.pincast.fm/dashboard/uuid
 
 ---
 
+## 8 · Permanent Quality Directives
+
+- **Zero TypeScript errors**: Code must compile without errors before being considered complete.
+- **Tests must be passing**: All tests must be run and pass before completing any ticket.
+- **No hypotheticals**: Never say something "should" work - test it immediately and fix any issues.
+- **Implementation verification**: Always check and prove that implementations work before completion.
+- **Documentation quality**: All documentation must have proper front matter with title and description, and all internal links must be valid.
+- **Clean commits**: Never add AI assistant branding, emoji, or co-author tags to commit messages. Keep messages concise and descriptive.
+
+---
+
 *End of spec v2*

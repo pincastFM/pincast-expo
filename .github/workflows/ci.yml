@@ -13,6 +13,29 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
+        
+    # Set up PostgreSQL with PostGIS for tests
+    services:
+      postgres:
+        image: postgis/postgis:14-3.3
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: pincast_test
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PG_URL_TEST: postgres://postgres:postgres@localhost:5432/pincast_test
+      POSTGRES_URL: postgres://postgres:postgres@localhost:5432/pincast_test
+      SEED_EMAIL_STAFF: staff@test.com
+      SEED_EMAIL_DEV: dev@test.com
 
     steps:
     - uses: actions/checkout@v3
@@ -26,9 +49,50 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm install
+      
     - name: Run linting
       run: pnpm lint
+      
+    - name: Cache TypeScript type checking results
+      uses: actions/cache@v3
+      with:
+        path: "apps/expo/.nuxt/typecheck"
+        key: ${{ runner.os }}-typecheck-${{ hashFiles('**/*.ts', '**/*.vue', '**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-typecheck-
+
     - name: Run type checking
       run: pnpm typecheck
-    - name: Build
-      run: pnpm build
+      
+    - name: Run database migrations
+      run: pnpm db:migrate
+      
+    - name: Run database seed
+      run: pnpm db:seed
+      
+    - name: Build all packages and apps
+      run: pnpm build -r
+      
+    - name: Build SDK package
+      run: pnpm build -r --filter @pincast/sdk
+      
+    - name: Build CLI package
+      run: pnpm build -r --filter pincast
+      
+    - name: Run all tests
+      run: pnpm test
+      
+    - name: Run SDK tests
+      run: pnpm --filter @pincast/sdk test test/integration.test.ts
+      
+    - name: Run CLI tests
+      run: pnpm --filter pincast test
+      
+    - name: Run Expo app tests 
+      run: pnpm -F expo test
+
+    - name: Install Cypress
+      run: pnpm -F expo cypress:install
+
+    - name: Run Cypress E2E tests
+      run: pnpm -F expo test:e2e:dev

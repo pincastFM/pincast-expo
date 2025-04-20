@@ -3,7 +3,7 @@ import * as h3 from 'h3';
 import ingestHandler from '~/server/api/ingest.post';
 import * as jwt from '~/server/utils/jwt';
 import * as queries from '~/server/db/queries';
-import { createMockEvent } from '~/test/utils/mocks';
+import { createMockH3Event } from '~/test/utils/mocks';
 
 // Mock dependencies
 vi.mock('~/server/utils/jwt', () => ({
@@ -15,13 +15,18 @@ vi.mock('~/server/db/queries', () => ({
   recordAnalyticsEvent: vi.fn()
 }));
 
-// Mock h3 methods
+// Properly mock h3 methods
 vi.mock('h3', async () => {
-  const actual = await vi.importActual('h3');
+  const actual = await vi.importActual<typeof import('h3')>('h3');
   return {
     ...actual,
     getRequestHeader: vi.fn(),
-    readBody: vi.fn()
+    readBody: vi.fn(),
+    createError: vi.fn().mockImplementation((statusCode, message) => {
+      const error = new Error(message) as Error & { statusCode: number };
+      error.statusCode = statusCode;
+      return error;
+    })
   };
 });
 
@@ -35,18 +40,17 @@ describe('POST /api/ingest', () => {
     const appId = '123e4567-e89b-12d3-a456-426614174000';
     const userId = '98765432-e89b-12d3-a456-426614174000';
     
-    // Create mock event
-    const event = createMockEvent({
-      method: 'POST',
-      headers: {
-        authorization: 'Bearer valid-token',
-        'content-type': 'application/json'
-      },
-      body: {
-        event: 'test_event',
-        payload: { test: 'data' }
-      }
-    });
+    // Setup mocks
+    const eventBody = {
+      event: 'test_event',
+      payload: { test: 'data' }
+    };
+    
+    // Mock readBody to return the event data
+    vi.mocked(h3.readBody).mockResolvedValue(eventBody);
+    
+    // Mock getRequestHeader to return the authorization header
+    vi.mocked(h3.getRequestHeader).mockReturnValue('Bearer valid-token');
     
     // Mock JWT verification
     vi.mocked(jwt.verifyJwt).mockResolvedValue({
@@ -60,8 +64,14 @@ describe('POST /api/ingest', () => {
       sub: userId
     });
     
-    // Mock getRequestHeader to return the authorization header
-    vi.spyOn(h3, 'getRequestHeader').mockReturnValue('Bearer valid-token');
+    // Create H3 event with our mock req/res
+    const event = createMockH3Event({
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer valid-token',
+        'content-type': 'application/json'
+      }
+    });
     
     // Act
     const response = await ingestHandler(event);
@@ -83,15 +93,16 @@ describe('POST /api/ingest', () => {
 
   it('should reject requests without authorization header', async () => {
     // Arrange
-    const event = createMockEvent({
+    // Mock getRequestHeader to return undefined (no auth header)
+    vi.mocked(h3.getRequestHeader).mockReturnValue(undefined);
+    
+    // Create H3 event
+    const event = createMockH3Event({
       method: 'POST',
       headers: {
         'content-type': 'application/json'
       }
     });
-    
-    // Mock getRequestHeader to return undefined (no auth header)
-    vi.spyOn(h3, 'getRequestHeader').mockReturnValue(undefined);
     
     // Act & Assert
     await expect(ingestHandler(event)).rejects.toThrow('Authentication token is required');
@@ -100,19 +111,20 @@ describe('POST /api/ingest', () => {
 
   it('should reject invalid tokens', async () => {
     // Arrange
-    const event = createMockEvent({
+    // Mock getRequestHeader to return the authorization header
+    vi.mocked(h3.getRequestHeader).mockReturnValue('Bearer invalid-token');
+    
+    // Mock JWT verification to throw error
+    vi.mocked(jwt.verifyJwt).mockRejectedValue(new Error('Invalid token'));
+    
+    // Create H3 event
+    const event = createMockH3Event({
       method: 'POST',
       headers: {
         authorization: 'Bearer invalid-token',
         'content-type': 'application/json'
       }
     });
-    
-    // Mock getRequestHeader to return the authorization header
-    vi.spyOn(h3, 'getRequestHeader').mockReturnValue('Bearer invalid-token');
-    
-    // Mock JWT verification to throw error
-    vi.mocked(jwt.verifyJwt).mockRejectedValue(new Error('Invalid token'));
     
     // Act & Assert
     await expect(ingestHandler(event)).rejects.toThrow('Invalid or expired token');
@@ -121,21 +133,22 @@ describe('POST /api/ingest', () => {
 
   it('should reject tokens with invalid audience format', async () => {
     // Arrange
-    const event = createMockEvent({
-      method: 'POST',
-      headers: {
-        authorization: 'Bearer token-with-wrong-audience',
-        'content-type': 'application/json'
-      }
-    });
-    
     // Mock getRequestHeader to return the authorization header
-    vi.spyOn(h3, 'getRequestHeader').mockReturnValue('Bearer token-with-wrong-audience');
+    vi.mocked(h3.getRequestHeader).mockReturnValue('Bearer token-with-wrong-audience');
     
     // Mock JWT verification
     vi.mocked(jwt.verifyJwt).mockResolvedValue({
       aud: 'not-app-format',
       sub: 'user-id'
+    });
+    
+    // Create H3 event
+    const event = createMockH3Event({
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer token-with-wrong-audience',
+        'content-type': 'application/json'
+      }
     });
     
     // Act & Assert
@@ -145,20 +158,14 @@ describe('POST /api/ingest', () => {
 
   it('should validate request body schema', async () => {
     // Arrange
-    const event = createMockEvent({
-      method: 'POST',
-      headers: {
-        authorization: 'Bearer valid-token',
-        'content-type': 'application/json'
-      },
-      body: {
-        // Missing required 'event' field
-        payload: { test: 'data' }
-      }
+    // Mock invalid body
+    vi.mocked(h3.readBody).mockResolvedValue({
+      // Missing required 'event' field
+      payload: { test: 'data' }
     });
     
     // Mock getRequestHeader to return the authorization header
-    vi.spyOn(h3, 'getRequestHeader').mockReturnValue('Bearer valid-token');
+    vi.mocked(h3.getRequestHeader).mockReturnValue('Bearer valid-token');
     
     // Mock JWT verification
     vi.mocked(jwt.verifyJwt).mockResolvedValue({
@@ -169,6 +176,15 @@ describe('POST /api/ingest', () => {
     vi.mocked(jwt.decodeJwt).mockReturnValue({
       aud: 'app:123e4567-e89b-12d3-a456-426614174000',
       sub: 'user-id'
+    });
+    
+    // Create H3 event
+    const event = createMockH3Event({
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer valid-token',
+        'content-type': 'application/json'
+      }
     });
     
     // Act & Assert

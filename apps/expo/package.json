@@ -1,0 +1,43 @@
+{
+  "name": "pincast-expo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@logto/nuxt": "latest",
+    "@nuxt/postgres": "latest",
+    "@pinia/nuxt": "latest",
+    "nuxt-icon": "latest",
+    "unocss": "latest"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/eslint-config-typescript": "latest",
+    "@nuxtjs/tailwindcss": "latest",
+    "@types/node": "^20",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-prettier": "latest",
+    "husky": "latest",
+    "lint-staged": "latest",
+    "nuxt": "^3.10.1",
+    "prettier": "latest",
+    "typescript": "latest",
+    "vue": "^3.4.15",
+    "vue-router": "^4.2.5",
+    "vue-tsc": "latest"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

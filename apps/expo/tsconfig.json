@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "./**/*",
+    "./.nuxt/nuxt.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

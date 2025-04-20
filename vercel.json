@@ -1,0 +1,7 @@
+{
+  "framework": "nuxt",
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install",
+  "outputDirectory": "apps/expo/.output/public"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "pincast-expo",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "pnpm run --filter pincast-expo dev",
+    "build": "pnpm run --filter pincast-expo build",
+    "lint": "pnpm run --filter pincast-expo lint",
+    "typecheck": "pnpm run --filter pincast-expo typecheck",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "latest",
+    "lint-staged": "latest"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

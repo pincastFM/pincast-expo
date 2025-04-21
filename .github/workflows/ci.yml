@@ -56,14 +56,14 @@ jobs:
     - name: Build SDK package
       run: |
         cd packages/sdk
+        echo "Working directory: $(pwd)"
         echo "Node version: $(node -v)"
-        echo "Listing src directory contents:"
-        ls -la src
-        echo "Listing src/runtime directory contents:"
-        ls -la src/runtime
+        echo "TypeScript version: $(tsc --version)"
+        echo "Listing source directory structure:"
+        find src -type f -name "*.ts" | sort
         echo "Building SDK with TypeScript compiler..."
         pnpm run build
-        echo "Verifying dist directory contents:"
+        echo "Verifying build output:"
         pnpm run verify-dist
     
     - name: Run linting

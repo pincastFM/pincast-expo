@@ -3,5 +3,26 @@
   "buildCommand": "pnpm build",
   "devCommand": "pnpm dev",
   "installCommand": "pnpm install",
-  "outputDirectory": "apps/expo/.output/public"
+  "outputDirectory": "apps/expo/.output/public",
+  "regions": ["iad1"],
+  "functions": {
+    "**/*": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=1, stale-while-revalidate=59"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "NODE_VERSION": "18.x"
+  }
 }

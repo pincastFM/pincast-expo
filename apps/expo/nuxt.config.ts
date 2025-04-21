@@ -15,9 +15,11 @@ export default defineNuxtConfig({
     mode: 'svg'
   },
 
-  // Set default runtime to edge
+  // Use standard Vercel preset for better Node.js compatibility
   nitro: {
-    preset: 'vercel-edge'
+    preset: 'vercel',
+    // Explicitly set Node.js version compatibility
+    nodeCompatibility: true
   },
 
   // Logto configuration

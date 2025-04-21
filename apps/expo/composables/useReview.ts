@@ -3,7 +3,7 @@ import { useFetch, useAsyncData } from '#imports'
 import type { App, AppState, Version } from '~/server/db/schema'
 
 // Using a more detailed and precise type definition to prevent TypeScript exact optional errors
-interface AppWithOwner extends Omit<App, 'owner' | 'latestVersion'> {
+export interface AppWithOwner extends Omit<App, 'owner' | 'latestVersion'> {
   owner: {
     id: string
     email: string | null
@@ -17,7 +17,7 @@ interface AppWithOwner extends Omit<App, 'owner' | 'latestVersion'> {
     lighthouseScore?: number | null;
     repoUrl?: string | null;
     deployUrl?: string | null;
-  }
+  } | undefined
 }
 
 interface AppDetail extends AppWithOwner {
@@ -38,8 +38,64 @@ export function useReview() {
     try {
       const { data } = await useFetch('/api/review/list')
       if (data.value) {
-        pending.value = data.value.pending || []
-        hidden.value = data.value.hidden || []
+        // Transform the raw data into properly typed objects
+        pending.value = (data.value.pending || []).map((item: any): AppWithOwner => ({
+          // Ensure all required App properties are present
+          id: item.id || '',
+          ownerId: item.ownerId || (item.owner?.id || ''),
+          title: item.title || '',
+          slug: item.slug || '',
+          heroUrl: item.heroUrl,
+          category: item.category,
+          priceCents: typeof item.priceCents === 'number' ? item.priceCents : 0,
+          isPaid: Boolean(item.isPaid),
+          state: (item.state || 'pending') as AppState,
+          createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
+          // Add owner and latestVersion from the fetched data
+          owner: {
+            id: item.owner?.id || '',
+            email: item.owner?.email || null
+          },
+          latestVersion: item.latestVersion ? {
+            id: item.latestVersion.id || '',
+            appId: item.latestVersion.appId || '',
+            createdAt: item.latestVersion.createdAt ? new Date(item.latestVersion.createdAt) : new Date(),
+            semver: item.latestVersion.semver || '0.0.0',
+            changelog: item.latestVersion.changelog || null,
+            lighthouseScore: item.latestVersion.lighthouseScore || null,
+            repoUrl: item.latestVersion.repoUrl || null,
+            deployUrl: item.latestVersion.deployUrl || null
+          } : undefined
+        }))
+
+        hidden.value = (data.value.hidden || []).map((item: any): AppWithOwner => ({
+          // Ensure all required App properties are present
+          id: item.id || '',
+          ownerId: item.ownerId || (item.owner?.id || ''),
+          title: item.title || '',
+          slug: item.slug || '',
+          heroUrl: item.heroUrl,
+          category: item.category,
+          priceCents: typeof item.priceCents === 'number' ? item.priceCents : 0,
+          isPaid: Boolean(item.isPaid),
+          state: (item.state || 'hidden') as AppState,
+          createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
+          // Add owner and latestVersion from the fetched data
+          owner: {
+            id: item.owner?.id || '',
+            email: item.owner?.email || null
+          },
+          latestVersion: item.latestVersion ? {
+            id: item.latestVersion.id || '',
+            appId: item.latestVersion.appId || '',
+            createdAt: item.latestVersion.createdAt ? new Date(item.latestVersion.createdAt) : new Date(),
+            semver: item.latestVersion.semver || '0.0.0',
+            changelog: item.latestVersion.changelog || null,
+            lighthouseScore: item.latestVersion.lighthouseScore || null,
+            repoUrl: item.latestVersion.repoUrl || null,
+            deployUrl: item.latestVersion.deployUrl || null
+          } : undefined
+        }))
       }
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch review list'

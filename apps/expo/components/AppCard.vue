@@ -49,23 +49,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { App, AppState } from '~/server/db/schema'
+import type { AppState } from '~/server/db/schema'
+
+// Import the AppWithOwner type from useReview
+import type { AppWithOwner } from '~/composables/useReview'
 
 // Define props
 interface AppCardProps {
-  app: App & {
-    owner?: { id: string; email: string | null } | undefined;
-    latestVersion?: {
-      appId: string;
-      id: string;
-      createdAt: Date;
-      semver: string;
-      changelog?: string | null;
-      lighthouseScore?: number | null;
-      repoUrl?: string | null;
-      deployUrl?: string | null;
-    } | undefined;
-  }
+  app: AppWithOwner;
 }
 
 const props = defineProps<AppCardProps>()

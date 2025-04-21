@@ -7,15 +7,25 @@ const { getUserByLogtoId, updateAppState, recordAnalyticsEvent } = dbQueries;
 
 // Mock imports
 vi.mock('~/server/utils/logto', () => ({
-  verifyLogtoToken: vi.fn(),
-  extractBearerToken: vi.fn(),
+  default: {
+    verifyLogtoToken: vi.fn().mockResolvedValue({ payload: { sub: 'user-123', role: 'staff' } }),
+    extractBearerToken: vi.fn().mockImplementation((header) => header ? 'valid-token' : null),
+    hasScope: vi.fn()
+  },
+  verifyLogtoToken: vi.fn().mockResolvedValue({ payload: { sub: 'user-123', role: 'staff' } }),
+  extractBearerToken: vi.fn().mockImplementation((header) => header ? 'valid-token' : null),
   hasScope: vi.fn()
 }));
 
 vi.mock('~/server/db/queries', () => ({
-  getUserByLogtoId: vi.fn(),
-  updateAppState: vi.fn(),
-  recordAnalyticsEvent: vi.fn()
+  default: {
+    getUserByLogtoId: vi.fn().mockResolvedValue({ id: 'user-123', email: 'test@example.com', role: 'staff' }),
+    updateAppState: vi.fn().mockResolvedValue({ id: 'app-123', state: 'approved' }),
+    recordAnalyticsEvent: vi.fn().mockResolvedValue({})
+  },
+  getUserByLogtoId: vi.fn().mockResolvedValue({ id: 'user-123', email: 'test@example.com', role: 'staff' }),
+  updateAppState: vi.fn().mockResolvedValue({ id: 'app-123', state: 'approved' }),
+  recordAnalyticsEvent: vi.fn().mockResolvedValue({})
 }));
 
 // DB is mocked via mockDb utility

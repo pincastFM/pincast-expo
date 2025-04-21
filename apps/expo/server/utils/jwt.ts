@@ -1,11 +1,12 @@
 import { SignJWT, jwtVerify, decodeJwt as joseDecodeJwt } from 'jose';
-import runtime from './runtime';
+// Direct imports from runtime to fix module resolution
+import { getRuntime, assertString } from './runtime';
 
 /**
  * Sign a JWT with the app's secret
  */
 export async function signJwt(payload: any, expiresIn: string | number = '1h'): Promise<string> {
-  const config = runtime.getRuntime();
+  const config = getRuntime();
   const secret = config.pincastJwtSecret;
   
   if (!secret) {
@@ -19,9 +20,9 @@ export async function signJwt(payload: any, expiresIn: string | number = '1h'): 
   if (typeof expiresIn === 'string') {
     const match = expiresIn.match(/^(\d+)([smhd])$/);
     if (match) {
-      const valueStr = runtime.assertString(match[1], 'Invalid expiration format');
+      const valueStr = assertString(match[1], 'Invalid expiration format');
       const value = parseInt(valueStr);
-      const unit = runtime.assertString(match[2], 'Invalid expiration unit');
+      const unit = assertString(match[2], 'Invalid expiration unit');
       
       switch (unit) {
         case 's': expirationTime = value; break;
@@ -51,7 +52,7 @@ export async function signJwt(payload: any, expiresIn: string | number = '1h'): 
  * Verify a JWT signed by our app
  */
 export async function verifyJwt(token: string): Promise<any> {
-  const config = runtime.getRuntime();
+  const config = getRuntime();
   const secret = config.pincastJwtSecret;
   
   if (!secret) {
@@ -80,3 +81,10 @@ export function decodeJwt(token: string): any {
     throw new Error('Invalid token format');
   }
 }
+
+// Add default export to fix imports
+export default {
+  signJwt,
+  verifyJwt,
+  decodeJwt
+};

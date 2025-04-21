@@ -47,10 +47,8 @@ export default defineNuxtConfig({
     }
   },
 
-  // Pincast SDK config
-  pincast: {
-    apiBase: process.env.PINCAST_API_URL || 'https://api.pincast.fm'
-  },
+  // SDK configuration is now handled by the module itself
+  // Public configuration is available via runtimeConfig.public.pincastApi
 
   typescript: {
     strict: true,

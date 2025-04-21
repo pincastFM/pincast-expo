@@ -18,37 +18,140 @@ declare module '#imports' {
   export const appendHeader: (event: any, name: string, value: string) => void;
 }
 
-// Path alias imports
+// Define interfaces for query results to fix type errors
+interface AppVersion {
+  id: string;
+  appId: string;
+  buildUrl: string;
+  deployUrl?: string;
+  createdAt: Date;
+  semver: string;
+  state: string;
+  changelog?: string | null;
+  lighthouseScore?: number | null;
+  repoUrl?: string | null;
+  [key: string]: any;
+}
+
+interface User {
+  id: string;
+  email: string | null;
+  role: string;
+  name?: string | null;
+  logtoId: string;
+  [key: string]: any;
+}
+
+// ===== MODULE TYPE DECLARATIONS =====
+
+// SERVER MODULE TYPE DECLARATIONS
 declare module '~/server/db/queries' {
-  export default {
-    getAppBySlug: (slug: string) => Promise<any>,
-    getAppById: (id: string) => Promise<any>,
-    listApps: (filters?: any) => Promise<any[]>,
-    createApp: (data: any) => Promise<any>,
-    updateAppState: (id: string, state: string) => Promise<any>,
-    rollbackVersion: (id: string) => Promise<any>,
-    getUserByLogtoId: (logtoId: string) => Promise<any>,
-    getVersionsByAppId: (appId: string) => Promise<any[]>,
-    recordAnalyticsEvent: (event: any) => Promise<any>
+  export const getAppBySlug: (slug: string) => Promise<any>;
+  export const getAppById: (id: string) => Promise<any>;
+  export const listApps: (filters?: any) => Promise<any[]>;
+  export const createApp: (data: any) => Promise<any>;
+  export const updateAppState: (id: string, state: string) => Promise<any>;
+  export const rollbackVersion: (id: string) => Promise<any>;
+  export const getUserByLogtoId: (logtoId: string) => Promise<User>;
+  export const getVersionsByAppId: (appId: string) => Promise<AppVersion[]>;
+  export const recordAnalyticsEvent: (event: any) => Promise<any>;
+  export const createVersion: (data: any) => Promise<any>;
+  
+  const queries = {
+    getAppBySlug,
+    getAppById,
+    listApps,
+    createApp,
+    updateAppState,
+    rollbackVersion,
+    getUserByLogtoId,
+    getVersionsByAppId,
+    recordAnalyticsEvent,
+    createVersion
   };
+  
+  export default queries;
 }
 
 declare module '~/server/utils/logto' {
-  export function validateToken(token: string): Promise<any>;
-  export function getRoles(userId: string): Promise<string[]>;
-  export function hasRole(userId: string, role: string): Promise<boolean>;
-  export function verifyLogtoToken(token: string): Promise<any>;
-  export function extractBearerToken(authHeader: string): string | null;
+  export const validateToken: (token: string) => Promise<any>;
+  export const getRoles: (userId: string) => Promise<string[]>;
+  export const hasRole: (userId: string, role: string) => Promise<boolean>;
+  export const verifyLogtoToken: (token: string) => Promise<any>;
+  export const extractBearerToken: (authHeader: string | undefined) => string | null;
+  export const hasScope: (token: any, scope: string) => boolean;
+  
+  const logtoUtils = {
+    validateToken,
+    getRoles,
+    hasRole,
+    verifyLogtoToken,
+    extractBearerToken,
+    hasScope
+  };
+  
+  export default logtoUtils;
+}
+
+declare module '~/server/utils/jwt' {
+  export const verifyJwt: (token: string) => Promise<any>;
+  export const signJwt: (payload: any, expiresIn?: string | number) => Promise<string>;
+  export const decodeJwt: (token: string) => any;
+  
+  // No default export
 }
 
 declare module '~/server/utils/runtime' {
-  export function getRuntimeEnv(): {
-    [key: string]: string;
+  export const getRuntime: () => {
+    pincastJwtSecret: string;
+    [key: string]: any;
   };
+  export const assertString: (value: any, errorMsg?: string) => string;
+  export const assertDefined: <T>(value: T | null | undefined, errorMsg?: string) => T;
+  export const assertNumber: (value: any, errorMsg?: string) => number;
+  export const safeGet: <T, K extends keyof T>(obj: T | null | undefined, key: K) => T[K] | undefined;
+  
+  const runtime = {
+    getRuntime,
+    assertString,
+    assertDefined,
+    assertNumber,
+    safeGet
+  };
+  
+  export default runtime;
 }
 
+// API ENDPOINTS TYPE DECLARATIONS
 declare module '~/server/api/catalog.get' {
-  export default function handler(event: any): Promise<any>;
+  export interface CatalogItem {
+    id: string;
+    title: string;
+    slug: string;
+    heroUrl: string | null;
+    distanceMeters?: number;
+    sessions7d: number;
+  }
+  
+  export default function handler(event: any): Promise<CatalogItem[]>;
+}
+
+declare module '~/server/api/apps/[slug].get' {
+  export interface AppDetail {
+    id: string;
+    title: string;
+    slug: string;
+    heroUrl: string | null;
+    ownerName: string;
+    buildUrl: string;
+    semver: string;
+    geo: {
+      center: [number, number]; // [longitude, latitude]
+      radiusMeters: number;
+    };
+  }
+  
+  export default function handler(event: any): Promise<AppDetail>;
 }
 
 declare module '~/server/api/ci/apps.post' {
@@ -59,7 +162,12 @@ declare module '~/server/api/token/app.post' {
   export default function handler(event: any): Promise<any>;
 }
 
-// Relative imports for test files
+declare module '~/server/api/ingest.post' {
+  export default function handler(event: any): Promise<any>;
+}
+
+// RELATIVE PATH MODULE DECLARATIONS
+// These are for the test files that use relative imports
 declare module '../../../server/api/ci/apps.post' {
   export default function handler(event: any): Promise<any>;
 }
@@ -69,39 +177,85 @@ declare module '../../../server/api/token/app.post' {
 }
 
 declare module '../../../server/db/queries' {
-  export default {
-    getAppBySlug: (slug: string) => Promise<any>,
-    getAppById: (id: string) => Promise<any>,
-    listApps: (filters?: any) => Promise<any[]>,
-    createApp: (data: any) => Promise<any>,
-    updateAppState: (id: string, state: string) => Promise<any>,
-    rollbackVersion: (id: string) => Promise<any>,
-    getUserByLogtoId: (logtoId: string) => Promise<any>,
-    getVersionsByAppId: (appId: string) => Promise<any[]>,
-    recordAnalyticsEvent: (event: any) => Promise<any>
+  export const getAppBySlug: (slug: string) => Promise<any>;
+  export const getAppById: (id: string) => Promise<any>;
+  export const listApps: (filters?: any) => Promise<any[]>;
+  export const createApp: (data: any) => Promise<any>;
+  export const updateAppState: (id: string, state: string) => Promise<any>;
+  export const rollbackVersion: (id: string) => Promise<any>;
+  export const getUserByLogtoId: (logtoId: string) => Promise<User>;
+  export const getVersionsByAppId: (appId: string) => Promise<AppVersion[]>;
+  export const recordAnalyticsEvent: (event: any) => Promise<any>;
+  export const createVersion: (data: any) => Promise<any>;
+  
+  const queries = {
+    getAppBySlug,
+    getAppById,
+    listApps,
+    createApp,
+    updateAppState,
+    rollbackVersion,
+    getUserByLogtoId,
+    getVersionsByAppId,
+    recordAnalyticsEvent,
+    createVersion
   };
+  
+  export default queries;
 }
 
 declare module '../../../server/utils/logto' {
-  export function validateToken(token: string): Promise<any>;
-  export function verifyLogtoToken(token: string): Promise<any>;
-  export function extractBearerToken(authHeader: string): string | null;
-  export function getRoles(userId: string): Promise<string[]>;
-  export function hasRole(userId: string, role: string): Promise<boolean>;
+  export const validateToken: (token: string) => Promise<any>;
+  export const getRoles: (userId: string) => Promise<string[]>;
+  export const hasRole: (userId: string, role: string) => Promise<boolean>;
+  export const verifyLogtoToken: (token: string) => Promise<any>;
+  export const extractBearerToken: (authHeader: string | undefined) => string | null;
+  export const hasScope: (token: any, scope: string) => boolean;
+  
+  const logtoUtils = {
+    validateToken,
+    getRoles,
+    hasRole,
+    verifyLogtoToken,
+    extractBearerToken,
+    hasScope
+  };
+  
+  export default logtoUtils;
+}
+
+declare module '../../../server/utils/jwt' {
+  export const verifyJwt: (token: string) => Promise<any>;
+  export const signJwt: (payload: any, expiresIn?: string | number) => Promise<string>;
+  export const decodeJwt: (token: string) => any;
+  
+  const jwtUtils = {
+    verifyJwt,
+    signJwt,
+    decodeJwt
+  };
+  
+  export default jwtUtils;
 }
 
 // For the relative import error in server/utils/jwt.ts
-declare module '~/server/api/ingest.post' {
-  export default function handler(event: any): Promise<any>;
-}
-
 declare module './runtime' {
-  interface Runtime {
+  export function getRuntime(): {
     pincastJwtSecret: string;
     [key: string]: any;
-  }
-  
-  export function getRuntime(): Runtime;
+  };
   export function assertString(value: any, errorMsg?: string): string;
-  export default { getRuntime, assertString };
+  export function assertDefined<T>(value: T | null | undefined, errorMsg?: string): T;
+  export function assertNumber(value: any, errorMsg?: string): number;
+  export function safeGet<T, K extends keyof T>(obj: T | null | undefined, key: K): T[K] | undefined;
+  
+  const runtime = {
+    getRuntime,
+    assertString,
+    assertDefined,
+    assertNumber,
+    safeGet
+  };
+  
+  export default runtime;
 }

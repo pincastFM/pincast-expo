@@ -244,12 +244,13 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
 });
 
 // Second plugin: Provider only - will run after initialization
-export const pincastProvider = defineNuxtPlugin((nuxtApp) => {
+export const pincastProvider = defineNuxtPlugin((_nuxtApp: any) => {
   // Return the instance created in the first plugin
   if (!pincastInstance) {
     console.warn('[Pincast] SDK not initialized properly');
     
     // Create a dummy instance to prevent errors
+    // Using type assertions to avoid generic type issues
     pincastInstance = {
       auth: {
         signIn: async () => { throw new Error('SDK not initialized'); },
@@ -257,7 +258,13 @@ export const pincastProvider = defineNuxtPlugin((nuxtApp) => {
         getToken: async () => null,
         getSession: async () => ({ id: '', email: null, role: 'player', isAuthenticated: false })
       },
-      data: () => ({ getAll: async () => [], getOne: async () => null, create: async () => null, update: async () => null, remove: async () => null }),
+      data: () => ({
+        getAll: async () => [] as any[],
+        getOne: async () => null as any,
+        create: async () => null as any,
+        update: async () => null as any,
+        remove: async () => null as any
+      }),
       analytics: {
         track: () => Promise.resolve(false),
         identify: () => Promise.resolve(false)

@@ -34,12 +34,22 @@ export default defineNuxtModule<ModuleOptions>({
     });
     
     // Second plugin provides the instance but doesn't initialize
+    // First create a wrapper for the provider plugin
+    const providerPluginPath = resolve('./runtime/provider-plugin');
+    nuxt.hook('nitro:build:before', async (nitro) => {
+      // Write a new file that imports and exports the provider from the main plugin
+      await nitro.unfs.write(providerPluginPath + '.ts', `
+        // Auto-generated provider plugin
+        import { pincastProvider } from './plugin'
+        export default pincastProvider
+      `);
+    });
+    
+    // Register the separate provider plugin
     addPlugin({
-      src: resolve('./runtime/plugin'),
-      name: 'pincast-provider-plugin',
+      src: providerPluginPath,
       mode: 'client',
-      order: 90, // Run later in the plugin sequence
-      export: 'pincastProvider'
+      order: 90 // Run later in the plugin sequence
     });
     
     // Choose just one auto-import approach to avoid duplication warnings

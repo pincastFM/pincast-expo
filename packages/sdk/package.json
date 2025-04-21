@@ -7,29 +7,28 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./nuxt": {
       "types": "./dist/module.d.ts",
-      "import": "./dist/module.js",
-      "require": "./dist/module.cjs"
+      "import": "./dist/module.js"
     },
     "./runtime/plugin": {
       "types": "./dist/runtime/plugin.d.ts",
-      "import": "./dist/runtime/plugin.js",
-      "require": "./dist/runtime/plugin.cjs"
+      "import": "./dist/runtime/plugin.js"
     }
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean",
-    "dev": "tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean --watch",
+    "prebuild": "rm -rf dist && node -e \"const fs = require('fs'), path = require('path'), cwd = process.cwd(); console.log('📂 sdk cwd:', cwd); ['src/index.ts','src/module.ts','src/runtime/plugin.ts'].forEach(f => console.log(f, fs.existsSync(path.join(cwd, f))));\"",
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "verify-dist": "node -e \"const fs = require('fs'), path = require('path'); console.log('Current directory:', process.cwd()); console.log('SDK dist path:', path.resolve(__dirname,'dist')); console.log('Dist directory contents:', fs.readdirSync('dist')); console.log('Source directory contents:', fs.readdirSync('src'))\"",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

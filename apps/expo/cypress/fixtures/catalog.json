@@ -1,0 +1,34 @@
+[
+  {
+    "id": "app-001",
+    "title": "NYC Urban Adventure",
+    "slug": "nyc-urban-adventure",
+    "heroUrl": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9",
+    "distanceMeters": 1250,
+    "sessions7d": 125
+  },
+  {
+    "id": "app-002",
+    "title": "Brooklyn Ghost Tour",
+    "slug": "brooklyn-ghost-tour",
+    "heroUrl": "https://images.unsplash.com/photo-1533106497176-45ae19e68ba2",
+    "distanceMeters": 2380,
+    "sessions7d": 89
+  },
+  {
+    "id": "app-003",
+    "title": "Central Park Explorer",
+    "slug": "central-park-explorer",
+    "heroUrl": "https://images.unsplash.com/photo-1541810785-0a3f214d777e",
+    "distanceMeters": 3500,
+    "sessions7d": 210
+  },
+  {
+    "id": "app-004",
+    "title": "Queens Food Trail",
+    "slug": "queens-food-trail",
+    "heroUrl": "https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4",
+    "distanceMeters": 6200,
+    "sessions7d": 65
+  }
+]

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>Pincast Expo Icon</title>
+    <g id="Icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Background" fill="#4A90E2" cx="64" cy="64" r="64"></circle>
+        <g id="Pin" transform="translate(32.000000, 24.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M32,0 C40.8366,0 48,7.16344 48,16 C48,24.8366 40.8366,32 32,32 C29.9001,32 27.8802,31.6394 26,30.9811 L26,76 C26,78.2091 24.2091,80 22,80 C19.7909,80 18,78.2091 18,76 L18,30.9811 C16.1198,31.6394 14.0999,32 12,32 C3.16344,32 -4.82823e-15,24.8366 0,16 C4.82823e-15,7.16344 3.16344,0 12,0 L32,0 Z M32,8 L12,8 C7.58172,8 4,11.5817 4,16 C4,20.4183 7.58172,24 12,24 C14.9727,24 17.6378,22.4403 19.1823,20 L26.8177,20 C28.3622,22.4403 31.0273,24 34,24 C38.4183,24 42,20.4183 42,16 C42,11.5817 38.4183,8 34,8 L32,8 Z" id="Combined-Shape"></path>
+        </g>
+    </g>
+</svg>

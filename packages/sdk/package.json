@@ -25,7 +25,7 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "rm -rf dist && node -e \"const fs = require('fs'), path = require('path'), cwd = process.cwd(); console.log('📂 sdk cwd:', cwd); ['src/index.ts','src/module.ts','src/runtime/plugin.ts'].forEach(f => console.log(f, fs.existsSync(path.join(cwd, f))));\"",
+    "prebuild": "rm -rf dist && echo Building SDK in $(pwd) && ls -R src",
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -p tsconfig.build.json --watch",
     "verify-dist": "node -e \"const fs = require('fs'), path = require('path'); console.log('Current directory:', process.cwd()); console.log('SDK dist path:', path.resolve(__dirname,'dist')); console.log('Dist directory contents:', fs.readdirSync('dist')); console.log('Source directory contents:', fs.readdirSync('src'))\"",

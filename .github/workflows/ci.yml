@@ -59,12 +59,12 @@ jobs:
         echo "Working directory: $(pwd)"
         echo "Node version: $(node -v)"
         echo "TypeScript version: $(tsc --version)"
-        echo "Listing source directory structure:"
-        find src -type f -name "*.ts" | sort
+        echo "Running prebuild to list source files:"
+        pnpm run prebuild
         echo "Building SDK with TypeScript compiler..."
         pnpm run build
         echo "Verifying build output:"
-        pnpm run verify-dist
+        ls -la dist
     
     - name: Run linting
       run: pnpm lint

@@ -24,6 +24,7 @@
   "dependencies": {
     "@logto/nuxt": "^1.2.3",
     "@logto/vue": "^3.0.6",
+    "@pincast/sdk": "workspace:*",
     "@pinia/nuxt": "latest",
     "@types/pg": "^8.11.13",
     "@vercel/postgres": "latest",

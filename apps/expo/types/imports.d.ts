@@ -96,11 +96,12 @@ declare module '~/server/api/ingest.post' {
 }
 
 declare module './runtime' {
-  export default {
-    getRuntime: () => ({
-      pincastJwtSecret: string,
-      [key: string]: any
-    }),
-    assertString: (value: any, errorMsg?: string) => string
-  };
+  interface Runtime {
+    pincastJwtSecret: string;
+    [key: string]: any;
+  }
+  
+  export function getRuntime(): Runtime;
+  export function assertString(value: any, errorMsg?: string): string;
+  export default { getRuntime, assertString };
 }

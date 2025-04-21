@@ -2,7 +2,12 @@
 export * from './types';
 
 // Export composables
-export * from './composables';
+export { 
+  usePincastAuth, 
+  usePincastData, 
+  usePincastLocation, 
+  usePincastAnalytics 
+} from './composables';
 
 // Export utils
 export * from './utils/proxy';

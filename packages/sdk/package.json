@@ -25,8 +25,11 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "rm -rf dist && echo Building SDK in $(pwd) && ls -R src",
+    "prebuild": "rm -rf dist && node ./check-files.js",
     "build": "tsc -p tsconfig.build.json",
+    "build:explicit": "tsc -p tsconfig.build-explicit.json",
+    "build:alt": "tsc --rootDir ./src --outDir ./dist --declaration ./src/index.ts ./src/module.ts ./src/runtime/plugin.ts",
+    "build:alt2": "find ./src -name '*.ts' | xargs tsc --rootDir ./src --outDir ./dist --declaration",
     "dev": "tsc -p tsconfig.build.json --watch",
     "verify-dist": "node -e \"const fs = require('fs'), path = require('path'); console.log('Current directory:', process.cwd()); console.log('SDK dist path:', path.resolve(__dirname,'dist')); console.log('Dist directory contents:', fs.readdirSync('dist')); console.log('Source directory contents:', fs.readdirSync('src'))\"",
     "lint": "eslint . --ext .ts,.tsx",

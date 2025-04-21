@@ -38,13 +38,13 @@ export async function createApp(appData: Omit<NewApp, 'geoArea'> & {
   const point = makePoint(longitude, latitude);
   
   // Helper function to create SQL fragments with UUID
-  const getUuidOrDefault = () => {
+  const getUuidOrDefault = (): any => {
     if (data.id) return sql`${data.id}`;
     return sql`uuid_generate_v4()`;
   };
   
   // Build the values for the SQL query
-  const id = getUuidOrDefault();
+  const id = getUuidOrDefault(); // This returns an SQL fragment, not a Promise
   const ownerId = sql`${data.ownerId}`;
   const title = sql`${data.title}`;
   const slug = sql`${data.slug}`;
@@ -55,7 +55,8 @@ export async function createApp(appData: Omit<NewApp, 'geoArea'> & {
   const state = sql`${data.state || 'draft'}`;
   
   // Insert the app with the PostGIS point
-  const query = sql`
+  // Using explicit cast to avoid TypeScript error with SQL fragments
+  const query = sql.unsafe`
     INSERT INTO apps (
       id, 
       owner_id, 

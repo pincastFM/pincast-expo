@@ -45,6 +45,262 @@ interface User {
 // ===== MODULE TYPE DECLARATIONS =====
 
 // SERVER MODULE TYPE DECLARATIONS
+
+// Database schema module declarations
+// The main path ~/ version
+declare module '~/server/db/schema' {
+  import { z } from 'zod';
+  
+  // Role enum types
+  export type UserRole = 'player' | 'developer' | 'staff';
+  export type AppState = 'draft' | 'pending' | 'published' | 'rejected' | 'hidden';
+  
+  // Table exports
+  export const users: any;
+  export const apps: any;
+  export const versions: any;
+  export const analytics: any;
+  export const payments: any;
+  
+  // Type definitions
+  export type User = {
+    id: string;
+    logtoId: string;
+    email: string | null;
+    role: UserRole;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type App = {
+    id: string;
+    ownerId: string;
+    title: string;
+    slug: string;
+    heroUrl: string | null;
+    category: string | null;
+    priceCents: number;
+    isPaid: boolean;
+    state: AppState;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type Version = {
+    id: string;
+    appId: string;
+    semver: string;
+    changelog: string | null;
+    lighthouseScore: number | null;
+    repoUrl: string | null;
+    deployUrl: string | null;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type AnalyticsEvent = {
+    id: number;
+    appId: string;
+    userId: string;
+    event: string;
+    ts: Date;
+    metadata?: Record<string, any>;
+    [key: string]: any;
+  };
+  
+  export type Payment = {
+    id: string;
+    appId: string;
+    stripeChargeId: string | null;
+    amountCents: number;
+    feeCents: number;
+    ts: Date;
+    [key: string]: any;
+  };
+  
+  // "New" types for insertion
+  export type NewUser = Omit<User, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewApp = Omit<App, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewVersion = Omit<Version, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewAnalyticsEvent = Omit<AnalyticsEvent, 'id' | 'ts'> & { id?: number; ts?: Date };
+  export type NewPayment = Omit<Payment, 'id' | 'ts'> & { id?: string; ts?: Date };
+}
+
+// Relative path version for direct imports
+declare module './schema' {
+  import { z } from 'zod';
+  
+  // Role enum types
+  export type UserRole = 'player' | 'developer' | 'staff';
+  export type AppState = 'draft' | 'pending' | 'published' | 'rejected' | 'hidden';
+  
+  // Table exports
+  export const users: any;
+  export const apps: any;
+  export const versions: any;
+  export const analytics: any;
+  export const payments: any;
+  
+  // Type definitions
+  export type User = {
+    id: string;
+    logtoId: string;
+    email: string | null;
+    role: UserRole;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type App = {
+    id: string;
+    ownerId: string;
+    title: string;
+    slug: string;
+    heroUrl: string | null;
+    category: string | null;
+    priceCents: number;
+    isPaid: boolean;
+    state: AppState;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type Version = {
+    id: string;
+    appId: string;
+    semver: string;
+    changelog: string | null;
+    lighthouseScore: number | null;
+    repoUrl: string | null;
+    deployUrl: string | null;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type AnalyticsEvent = {
+    id: number;
+    appId: string;
+    userId: string;
+    event: string;
+    ts: Date;
+    metadata?: Record<string, any>;
+    [key: string]: any;
+  };
+  
+  export type Payment = {
+    id: string;
+    appId: string;
+    stripeChargeId: string | null;
+    amountCents: number;
+    feeCents: number;
+    ts: Date;
+    [key: string]: any;
+  };
+  
+  // "New" types for insertion
+  export type NewUser = Omit<User, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewApp = Omit<App, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewVersion = Omit<Version, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewAnalyticsEvent = Omit<AnalyticsEvent, 'id' | 'ts'> & { id?: number; ts?: Date };
+  export type NewPayment = Omit<Payment, 'id' | 'ts'> & { id?: string; ts?: Date };
+}
+
+// PostGIS module for the ~/server/db path
+declare module '~/server/db/postgis' {
+  export function makePoint(longitude: number, latitude: number): any;
+  export function checkPostGIS(): Promise<boolean>;
+  export function withinDistance(geoColumn: any, point: any, distanceMeters: number): any;
+  export function asText(geoColumn: any): any;
+  export function distance(geoColumn: any, point: any): any;
+}
+
+// PostGIS module for the relative path
+declare module './postgis' {
+  export function makePoint(longitude: number, latitude: number): any;
+  export function checkPostGIS(): Promise<boolean>;
+  export function withinDistance(geoColumn: any, point: any, distanceMeters: number): any;
+  export function asText(geoColumn: any): any;
+  export function distance(geoColumn: any, point: any): any;
+}
+
+// Another relative path version used in API routes
+declare module '../../../db/schema' {
+  import { z } from 'zod';
+  
+  // Role enum types
+  export type UserRole = 'player' | 'developer' | 'staff';
+  export type AppState = 'draft' | 'pending' | 'published' | 'rejected' | 'hidden';
+  
+  // Table exports
+  export const users: any;
+  export const apps: any;
+  export const versions: any;
+  export const analytics: any;
+  export const payments: any;
+  
+  // Type definitions
+  export type User = {
+    id: string;
+    logtoId: string;
+    email: string | null;
+    role: UserRole;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type App = {
+    id: string;
+    ownerId: string;
+    title: string;
+    slug: string;
+    heroUrl: string | null;
+    category: string | null;
+    priceCents: number;
+    isPaid: boolean;
+    state: AppState;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type Version = {
+    id: string;
+    appId: string;
+    semver: string;
+    changelog: string | null;
+    lighthouseScore: number | null;
+    repoUrl: string | null;
+    deployUrl: string | null;
+    createdAt: Date;
+    [key: string]: any;
+  };
+  
+  export type AnalyticsEvent = {
+    id: number;
+    appId: string;
+    userId: string;
+    event: string;
+    ts: Date;
+    metadata?: Record<string, any>;
+    [key: string]: any;
+  };
+  
+  export type Payment = {
+    id: string;
+    appId: string;
+    stripeChargeId: string | null;
+    amountCents: number;
+    feeCents: number;
+    ts: Date;
+    [key: string]: any;
+  };
+  
+  // "New" types for insertion
+  export type NewUser = Omit<User, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewApp = Omit<App, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewVersion = Omit<Version, 'id' | 'createdAt'> & { id?: string; createdAt?: Date };
+  export type NewAnalyticsEvent = Omit<AnalyticsEvent, 'id' | 'ts'> & { id?: number; ts?: Date };
+  export type NewPayment = Omit<Payment, 'id' | 'ts'> & { id?: string; ts?: Date };
+}
 declare module '~/server/db/queries' {
   export const getAppBySlug: (slug: string) => Promise<any>;
   export const getAppById: (id: string) => Promise<any>;

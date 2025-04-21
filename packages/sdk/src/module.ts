@@ -31,12 +31,8 @@ export default defineNuxtModule<ModuleOptions>({
       mode: 'client'
     });
     
-    // Auto-import composables
-    nuxt.hook('imports:dirs', (dirs) => {
-      dirs.push(resolve('./composables'));
-    });
-    
-    // Add auto-imports for the SDK composables
+    // Choose just one auto-import approach to avoid duplication warnings
+    // Only register the composables explicitly and don't scan directories
     nuxt.hook('imports:sources', (sources) => {
       sources.push({
         from: '@pincast/sdk',

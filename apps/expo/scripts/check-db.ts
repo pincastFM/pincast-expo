@@ -25,22 +25,25 @@ async function checkDatabase() {
     
     // Check users table
     const usersResult = await sql`SELECT id, email, role FROM users ORDER BY created_at DESC LIMIT 10`;
-    console.log(`\n📋 Users in database: ${usersResult.rowCount}`);
-    if (usersResult.rowCount > 0) {
+    const userCount = usersResult.rowCount ?? 0; // Use nullish coalescing for safety
+    console.log(`\n📋 Users in database: ${userCount}`);
+    if (userCount > 0) {
       console.table(usersResult.rows);
     }
     
     // Check apps table
     const appsResult = await sql`SELECT id, title, slug, state FROM apps ORDER BY created_at DESC LIMIT 10`;
-    console.log(`\n📱 Apps in database: ${appsResult.rowCount}`);
-    if (appsResult.rowCount > 0) {
+    const appCount = appsResult.rowCount ?? 0; // Use nullish coalescing for safety
+    console.log(`\n📱 Apps in database: ${appCount}`);
+    if (appCount > 0) {
       console.table(appsResult.rows);
     }
     
     // Check versions table
     const versionsResult = await sql`SELECT id, app_id, semver FROM versions ORDER BY created_at DESC LIMIT 10`;
-    console.log(`\n🔢 Versions in database: ${versionsResult.rowCount}`);
-    if (versionsResult.rowCount > 0) {
+    const versionCount = versionsResult.rowCount ?? 0; // Use nullish coalescing for safety
+    console.log(`\n🔢 Versions in database: ${versionCount}`);
+    if (versionCount > 0) {
       console.table(versionsResult.rows);
     }
     

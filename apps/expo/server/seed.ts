@@ -69,9 +69,15 @@ export async function seed() {
         RETURNING *
       `;
       staffUser = insertResult.rows[0];
-      console.log(`✅ Created staff user: ${staffUser.email}`);
+      if (staffUser) {
+        console.log(`✅ Created staff user: ${staffUser.email || staffUser.logtoId}`);
+      } else {
+        console.log(`❌ Failed to create staff user (no rows returned)`);
+      }
+    } else if (staffUser) {
+      console.log(`✅ Staff user already exists: ${staffUser.email || staffUser.logtoId}`);
     } else {
-      console.log(`✅ Staff user already exists: ${staffUser.email}`);
+      console.log(`❓ Staff user check returned undefined result`);
     }
     
     // Create developer user if not exists
@@ -85,16 +91,23 @@ export async function seed() {
         RETURNING *
       `;
       devUser = insertResult.rows[0];
-      console.log(`✅ Created developer user: ${devUser.email}`);
+      if (devUser) {
+        console.log(`✅ Created developer user: ${devUser.email || devUser.logtoId}`);
+      } else {
+        console.log(`❌ Failed to create developer user (no rows returned)`);
+      }
+    } else if (devUser) {
+      console.log(`✅ Developer user already exists: ${devUser.email || devUser.logtoId}`);
     } else {
-      console.log(`✅ Developer user already exists: ${devUser.email}`);
+      console.log(`❓ Developer user check returned undefined result`);
     }
     
     // Create sample app if not exists
     const appSlugCheck = await sql`SELECT * FROM apps WHERE slug = ${SAMPLE_APP.slug}`;
-    if (appSlugCheck.rowCount === 0) {
+    if ((appSlugCheck.rowCount === 0 || appSlugCheck.rowCount === null) && devUser) {
       // Create a PostGIS point
-      const geoPoint = sql`ST_SetSRID(ST_Point(${SAMPLE_APP.longitude}, ${SAMPLE_APP.latitude}), 4326)`;
+      // We use sql.unsafe to avoid TypeScript error with the SQL template
+      const geoPoint = sql.unsafe`ST_SetSRID(ST_Point(${SAMPLE_APP.longitude}, ${SAMPLE_APP.latitude}), 4326)`;
       
       // Insert the app
       const appInsert = await sql`
@@ -106,21 +119,33 @@ export async function seed() {
         )
         RETURNING *
       `;
-      const app = appInsert.rows[0];
-      console.log(`✅ Created sample app: ${app.title}`);
       
-      // Create sample version
-      const versionInsert = await sql`
-        INSERT INTO versions (
-          app_id, semver, changelog, lighthouse_score, repo_url, deploy_url
-        ) VALUES (
-          ${app.id}, ${SAMPLE_VERSION.semver}, ${SAMPLE_VERSION.changelog}, 
-          ${SAMPLE_VERSION.lighthouseScore}, ${SAMPLE_VERSION.repoUrl}, ${SAMPLE_VERSION.deployUrl}
-        )
-        RETURNING *
-      `;
-      const version = versionInsert.rows[0];
-      console.log(`✅ Created sample version: ${version.semver}`);
+      const app = appInsert.rows[0];
+      if (app) {
+        console.log(`✅ Created sample app: ${app.title}`);
+        
+        // Create sample version
+        const versionInsert = await sql`
+          INSERT INTO versions (
+            app_id, semver, changelog, lighthouse_score, repo_url, deploy_url
+          ) VALUES (
+            ${app.id}, ${SAMPLE_VERSION.semver}, ${SAMPLE_VERSION.changelog}, 
+            ${SAMPLE_VERSION.lighthouseScore}, ${SAMPLE_VERSION.repoUrl}, ${SAMPLE_VERSION.deployUrl}
+          )
+          RETURNING *
+        `;
+        
+        const version = versionInsert.rows[0];
+        if (version) {
+          console.log(`✅ Created sample version: ${version.semver}`);
+        } else {
+          console.log(`❌ Failed to create sample version (no rows returned)`);
+        }
+      } else {
+        console.log(`❌ Failed to create sample app (no rows returned)`);
+      }
+    } else if (appSlugCheck.rowCount === 0) {
+      console.log(`⚠️ Skipping app creation as developer user is undefined`);
     } else {
       console.log(`✅ Sample app already exists: ${SAMPLE_APP.title}`);
     }

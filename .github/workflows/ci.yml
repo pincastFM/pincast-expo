@@ -50,9 +50,41 @@ jobs:
     - name: Install dependencies
       run: pnpm install
       
+    # Debug workspace structure
+    - name: Debug workspace
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Listing packages directory:"
+        ls -la packages/
+        echo "Checking SDK package.json:"
+        cat packages/sdk/package.json || echo "File not found"
+        echo "Checking workspace configuration:"
+        cat pnpm-workspace.yaml
+        echo "Checking all available workspaces:"
+        pnpm -r exec pwd
+      
     # Build SDK first to make it available for typecheck
     - name: Build SDK package
-      run: pnpm --filter @pincast/sdk build
+      run: |
+        # Try both approaches to build the SDK
+        pnpm --filter @pincast/sdk build || true
+        # Direct path approach as fallback
+        if [ -d "packages/sdk" ]; then
+          cd packages/sdk
+          pnpm install
+          pnpm build
+          cd ../../
+        fi
+        # Debug output to verify build
+        find packages/sdk/dist -type f | sort || echo "SDK dist directory not found"
+        
+        # Create a symbolic link in node_modules as a fallback if needed
+        mkdir -p node_modules/@pincast
+        if [ ! -e "node_modules/@pincast/sdk" ] && [ -d "packages/sdk" ]; then
+          echo "Creating symbolic link for SDK"
+          ln -sf $(pwd)/packages/sdk node_modules/@pincast/sdk
+        fi
     
     - name: Run linting
       run: pnpm lint

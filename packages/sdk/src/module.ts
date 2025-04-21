@@ -22,7 +22,8 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url);
-    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url));
+    // Note: runtimeDir is currently unused but may be needed for future extensions
+    // const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url));
     
     // Add the Pincast plugin
     addPlugin({

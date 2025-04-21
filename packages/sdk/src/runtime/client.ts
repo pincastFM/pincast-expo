@@ -1,4 +1,4 @@
-import type { BaseItem, GeoItem, GeoPoint, PincastClientConfig, QueryParams } from '../types';
+import type { BaseItem, GeoPoint, QueryParams } from '../types';
 import { getApiBaseUrl } from '../utils/proxy';
 
 /**

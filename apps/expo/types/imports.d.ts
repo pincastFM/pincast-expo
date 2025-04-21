@@ -20,25 +20,25 @@ declare module '#imports' {
 
 // Path alias imports
 declare module '~/server/db/queries' {
-  export interface DbQueries {
-    // Add actual method signatures as needed
-    getAppBySlug: (slug: string) => Promise<any>;
-    getAppById: (id: string) => Promise<any>;
-    listApps: (filters?: any) => Promise<any[]>;
-    createApp: (data: any) => Promise<any>;
-    updateAppState: (id: string, state: string) => Promise<any>;
-    rollbackVersion: (id: string) => Promise<any>;
-    // Add other methods as needed
-  }
-  
-  const queries: DbQueries;
-  export default queries;
+  export default {
+    getAppBySlug: (slug: string) => Promise<any>,
+    getAppById: (id: string) => Promise<any>,
+    listApps: (filters?: any) => Promise<any[]>,
+    createApp: (data: any) => Promise<any>,
+    updateAppState: (id: string, state: string) => Promise<any>,
+    rollbackVersion: (id: string) => Promise<any>,
+    getUserByLogtoId: (logtoId: string) => Promise<any>,
+    getVersionsByAppId: (appId: string) => Promise<any[]>,
+    recordAnalyticsEvent: (event: any) => Promise<any>
+  };
 }
 
 declare module '~/server/utils/logto' {
   export function validateToken(token: string): Promise<any>;
   export function getRoles(userId: string): Promise<string[]>;
   export function hasRole(userId: string, role: string): Promise<boolean>;
+  export function verifyLogtoToken(token: string): Promise<any>;
+  export function extractBearerToken(authHeader: string): string | null;
 }
 
 declare module '~/server/utils/runtime' {
@@ -59,7 +59,48 @@ declare module '~/server/api/token/app.post' {
   export default function handler(event: any): Promise<any>;
 }
 
+// Relative imports for test files
+declare module '../../../server/api/ci/apps.post' {
+  export default function handler(event: any): Promise<any>;
+}
+
+declare module '../../../server/api/token/app.post' {
+  export default function handler(event: any): Promise<any>;
+}
+
+declare module '../../../server/db/queries' {
+  export default {
+    getAppBySlug: (slug: string) => Promise<any>,
+    getAppById: (id: string) => Promise<any>,
+    listApps: (filters?: any) => Promise<any[]>,
+    createApp: (data: any) => Promise<any>,
+    updateAppState: (id: string, state: string) => Promise<any>,
+    rollbackVersion: (id: string) => Promise<any>,
+    getUserByLogtoId: (logtoId: string) => Promise<any>,
+    getVersionsByAppId: (appId: string) => Promise<any[]>,
+    recordAnalyticsEvent: (event: any) => Promise<any>
+  };
+}
+
+declare module '../../../server/utils/logto' {
+  export function validateToken(token: string): Promise<any>;
+  export function verifyLogtoToken(token: string): Promise<any>;
+  export function extractBearerToken(authHeader: string): string | null;
+  export function getRoles(userId: string): Promise<string[]>;
+  export function hasRole(userId: string, role: string): Promise<boolean>;
+}
+
 // For the relative import error in server/utils/jwt.ts
+declare module '~/server/api/ingest.post' {
+  export default function handler(event: any): Promise<any>;
+}
+
 declare module './runtime' {
-  export const runtimeConfig: any;
+  export default {
+    getRuntime: () => ({
+      pincastJwtSecret: string,
+      [key: string]: any
+    }),
+    assertString: (value: any, errorMsg?: string) => string
+  };
 }

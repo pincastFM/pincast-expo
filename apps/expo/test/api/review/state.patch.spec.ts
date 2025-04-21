@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { verifyLogtoToken, extractBearerToken } from '~/server/utils/logto';
-import { getUserByLogtoId, updateAppState, recordAnalyticsEvent } from '~/server/db/queries';
+import logtoUtils from '~/server/utils/logto';
+import dbQueries from '~/server/db/queries';
+
+const { verifyLogtoToken, extractBearerToken } = logtoUtils;
+const { getUserByLogtoId, updateAppState, recordAnalyticsEvent } = dbQueries;
 
 // Mock imports
 vi.mock('~/server/utils/logto', () => ({

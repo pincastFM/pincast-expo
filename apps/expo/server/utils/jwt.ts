@@ -1,12 +1,11 @@
 import { SignJWT, jwtVerify, decodeJwt as joseDecodeJwt } from 'jose';
-import { getRuntime } from './runtime';
-import { assertString } from './runtime';
+import runtime from './runtime';
 
 /**
  * Sign a JWT with the app's secret
  */
 export async function signJwt(payload: any, expiresIn: string | number = '1h'): Promise<string> {
-  const config = getRuntime();
+  const config = runtime.getRuntime();
   const secret = config.pincastJwtSecret;
   
   if (!secret) {
@@ -20,9 +19,9 @@ export async function signJwt(payload: any, expiresIn: string | number = '1h'): 
   if (typeof expiresIn === 'string') {
     const match = expiresIn.match(/^(\d+)([smhd])$/);
     if (match) {
-      const valueStr = assertString(match[1], 'Invalid expiration format');
+      const valueStr = runtime.assertString(match[1], 'Invalid expiration format');
       const value = parseInt(valueStr);
-      const unit = assertString(match[2], 'Invalid expiration unit');
+      const unit = runtime.assertString(match[2], 'Invalid expiration unit');
       
       switch (unit) {
         case 's': expirationTime = value; break;
@@ -52,7 +51,7 @@ export async function signJwt(payload: any, expiresIn: string | number = '1h'): 
  * Verify a JWT signed by our app
  */
 export async function verifyJwt(token: string): Promise<any> {
-  const config = getRuntime();
+  const config = runtime.getRuntime();
   const secret = config.pincastJwtSecret;
   
   if (!secret) {

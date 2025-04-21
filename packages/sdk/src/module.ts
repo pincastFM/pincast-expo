@@ -1,5 +1,5 @@
 import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit';
-import { fileURLToPath } from 'url';
+// import { fileURLToPath } from 'url'; // Not used in current implementation
 
 export interface ModuleOptions {
   /**

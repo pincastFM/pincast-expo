@@ -54,6 +54,11 @@ jobs:
     - name: Build SDK package
       run: |
         cd packages/sdk
+        echo "Node version: $(node -v)"
+        echo "Listing src directory:"
+        ls -la src
+        echo "Listing src/runtime directory:"
+        ls -la src/runtime
         pnpm run build
     
     - name: Run linting

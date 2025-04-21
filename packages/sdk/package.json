@@ -28,7 +28,12 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean",
+    "prebuild": "rm -rf dist && node -e \"console.log('📂 cwd:', process.cwd()); console.log('Files exist check:'); ['src/index.ts','src/module.ts','src/runtime/plugin.ts'].forEach(f=>console.log(f, require('fs').existsSync(f)));\"",
+    "build": "pnpm run build:index && pnpm run build:module && pnpm run build:plugin || pnpm run build:fallback",
+    "build:index": "node ./node_modules/.bin/tsup src/index.ts --dts --format cjs,esm --clean=false --sourcemap",
+    "build:module": "node ./node_modules/.bin/tsup src/module.ts --dts --format cjs,esm --clean=false --sourcemap",
+    "build:plugin": "node ./node_modules/.bin/tsup src/runtime/plugin.ts --dts --format cjs,esm --clean=false --sourcemap",
+    "build:fallback": "node ./build.js",
     "dev": "tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean --watch",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
@@ -54,6 +59,7 @@
     "@types/node": "^20.17.30",
     "eslint": "latest",
     "msw": "^2.2.11",
+    "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.0",

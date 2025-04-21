@@ -7,7 +7,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "lint": "eslint .",
+    "lint": "eslint --config eslint.config.js .",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -43,18 +43,23 @@
     "@types/cypress": "^1.1.6",
     "@types/node": "^20.17.30",
     "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.5.0",
+    "@typescript-eslint/parser": "^7.5.0",
     "@vitejs/plugin-vue": "latest",
     "@vue/test-utils": "latest",
     "cypress": "latest",
     "drizzle-kit": "^0.18.1",
-    "eslint": "latest",
+    "eslint": "~9.25.0",
     "eslint-config-prettier": "latest",
     "eslint-plugin-prettier": "latest",
+    "eslint-plugin-vue": "latest",
+    "vue-eslint-parser": "latest",
     "h3": "^1.9.0",
     "husky": "latest",
     "jose": "^6.0.10",
     "jsdom": "latest",
     "lint-staged": "latest",
+    "node-mocks-http": "^1.16.2",
     "nuxt": "^3.10.1",
     "prettier": "latest",
     "start-server-and-test": "^2.0.11",
@@ -68,7 +73,7 @@
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
-      "eslint --fix",
+      "eslint --config eslint.config.js --fix",
       "prettier --write"
     ]
   }

@@ -235,6 +235,12 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
   // Store the instance for reuse
   pincastInstance = pincast;
   
+  // Also store on window for cross-plugin access
+  if (typeof window !== 'undefined') {
+    // @ts-ignore - We're adding a custom property to window
+    window.__PINCAST_SDK_INSTANCE = pincast;
+  }
+  
   if (process.env.NODE_ENV !== 'production') {
     console.log('[Pincast] SDK initialized successfully');
   }
@@ -243,39 +249,4 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
   return {};
 });
 
-// Second plugin: Provider only - will run after initialization
-export const pincastProvider = defineNuxtPlugin((_nuxtApp: any) => {
-  // Return the instance created in the first plugin
-  if (!pincastInstance) {
-    console.warn('[Pincast] SDK not initialized properly');
-    
-    // Create a dummy instance to prevent errors
-    // Using type assertions to avoid generic type issues
-    pincastInstance = {
-      auth: {
-        signIn: async () => { throw new Error('SDK not initialized'); },
-        signOut: async () => { throw new Error('SDK not initialized'); },
-        getToken: async () => null,
-        getSession: async () => ({ id: '', email: null, role: 'player', isAuthenticated: false })
-      },
-      data: () => ({
-        getAll: async () => [] as any[],
-        getOne: async () => null as any,
-        create: async () => null as any,
-        update: async () => null as any,
-        remove: async () => null as any
-      }),
-      analytics: {
-        track: () => Promise.resolve(false),
-        identify: () => Promise.resolve(false)
-      }
-    };
-  }
-  
-  // Only return the provide object without trying to call nuxtApp.provide
-  return {
-    provide: {
-      pincast: pincastInstance
-    }
-  };
-});
+// Second plugin: Provider only - has been moved to provider.ts

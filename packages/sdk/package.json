@@ -28,12 +28,8 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "rm -rf dist && node -e \"console.log('📂 cwd:', process.cwd()); console.log('Files exist check:'); ['src/index.ts','src/module.ts','src/runtime/plugin.ts'].forEach(f=>console.log(f, require('fs').existsSync(f)));\"",
-    "build": "pnpm run build:index && pnpm run build:module && pnpm run build:plugin || pnpm run build:fallback",
-    "build:index": "node ./node_modules/.bin/tsup src/index.ts --dts --format cjs,esm --clean=false --sourcemap",
-    "build:module": "node ./node_modules/.bin/tsup src/module.ts --dts --format cjs,esm --clean=false --sourcemap",
-    "build:plugin": "node ./node_modules/.bin/tsup src/runtime/plugin.ts --dts --format cjs,esm --clean=false --sourcemap",
-    "build:fallback": "node ./build.js",
+    "prebuild": "node -e \"const fs = require('fs'), path = require('path'), cwd = process.cwd(); console.log('📂 sdk cwd:', cwd); ['src/index.ts','src/module.ts','src/runtime/plugin.ts'].forEach(f => console.log(f, fs.existsSync(path.join(cwd, f))));\"",
+    "build": "pnpm exec tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean",
     "dev": "tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean --watch",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",

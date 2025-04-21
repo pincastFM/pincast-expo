@@ -95,18 +95,24 @@ async function runMigration() {
               const keys = Object.keys(error);
               errorMessage = keys.length ? `Object with keys: ${keys.join(', ')}` : 'Empty object';
               
-              if (error.code) errorDetails += ` Code: ${error.code}`;
-              if (error.errno) errorDetails += ` Errno: ${error.errno}`;
-              if (error.sqlMessage) errorDetails += ` SQL: ${error.sqlMessage}`;
-              if (error.sqlState) errorDetails += ` State: ${error.sqlState}`;
+              // Use type assertion to access potential error properties
+              const errorObj = error as Record<string, unknown>;
+              if ('code' in errorObj && errorObj.code) errorDetails += ` Code: ${String(errorObj.code)}`;
+              if ('errno' in errorObj && errorObj.errno) errorDetails += ` Errno: ${String(errorObj.errno)}`;
+              if ('sqlMessage' in errorObj && errorObj.sqlMessage) errorDetails += ` SQL: ${String(errorObj.sqlMessage)}`;
+              if ('sqlState' in errorObj && errorObj.sqlState) errorDetails += ` State: ${String(errorObj.sqlState)}`;
               
               // Try to stringify with replacer function to handle circular references
               errorDetails += ` Full: ${JSON.stringify(error, (key, value) => {
                 if (key === '' || typeof value !== 'object') return value;
-                return Object.keys(value).reduce((obj, k) => {
-                  obj[k] = value[k];
-                  return obj;
-                }, {});
+                // Use type-safe approach here to avoid TS7053 error
+                const obj: Record<string, unknown> = {};
+                if (value !== null) {
+                  Object.keys(value as Record<string, unknown>).forEach(k => {
+                    obj[k] = (value as Record<string, unknown>)[k];
+                  });
+                }
+                return obj;
               }, 2)}`;
             } catch (e) {
               errorDetails = 'Object could not be stringified';
@@ -148,9 +154,10 @@ async function runMigration() {
         }
       } else if (typeof error === 'object' && error !== null) {
         try {
-          // Log all properties of the error object
-          console.log('⚠️ Error object properties:', Object.getOwnPropertyNames(error).join(', '));
-          console.log('⚠️ Error object stringify attempt:', JSON.stringify(error, null, 2));
+          // Log all properties of the error object - use safe type assertion
+          const errorObj = error as Record<string, unknown>;
+          console.log('⚠️ Error object properties:', Object.getOwnPropertyNames(errorObj).join(', '));
+          console.log('⚠️ Error object stringify attempt:', JSON.stringify(errorObj, null, 2));
         } catch (e) {
           console.log('⚠️ Error object could not be stringified');
         }
@@ -190,8 +197,10 @@ async function runMigration() {
       console.error('❌ Error is undefined');
     } else if (typeof error === 'object') {
       try {
-        console.error('❌ Error object keys:', Object.keys(error).join(', '));
-        console.error('❌ Error object stringify attempt:', JSON.stringify(error, null, 2));
+        // Use safe type assertion for object
+        const errorObj = error as Record<string, unknown>;
+        console.error('❌ Error object keys:', Object.keys(errorObj).join(', '));
+        console.error('❌ Error object stringify attempt:', JSON.stringify(errorObj, null, 2));
       } catch (e) {
         console.error('❌ Error object could not be stringified');
       }

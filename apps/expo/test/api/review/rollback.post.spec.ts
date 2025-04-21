@@ -52,7 +52,7 @@ vi.mock('h3', async () => {
 
 // Mock #imports for Nuxt-specific functions
 vi.mock('#imports', () => ({
-  defineEventHandler: (handler) => handler,
+  defineEventHandler: (handler: (event: any) => any) => handler,
   useRuntimeConfig: () => ({
     pincastJwtSecret: 'test-secret-that-is-at-least-32-chars-long'
   })
@@ -137,7 +137,7 @@ async function testHandlerRollback(event: any) {
     }
     
     // Find the target version to roll back to
-    const targetVersion = appVersions.find(v => v.id === versionId);
+    const targetVersion = appVersions.find((v: any) => v.id === versionId);
     
     if (!targetVersion) {
       throw createError({

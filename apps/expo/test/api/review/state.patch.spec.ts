@@ -35,7 +35,7 @@ vi.mock('h3', () => ({
 
 // Mock #imports for Nuxt-specific functions
 vi.mock('#imports', () => ({
-  defineEventHandler: (handler) => handler,
+  defineEventHandler: (handler: (event: any) => any) => handler,
   useRuntimeConfig: () => ({
     pincastJwtSecret: 'test-secret-that-is-at-least-32-chars-long'
   })

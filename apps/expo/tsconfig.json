@@ -4,7 +4,9 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./*"],
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@pincast/sdk": ["../../packages/sdk/dist"],
+      "@pincast/sdk/*": ["../../packages/sdk/dist/*"]
     }
   },
   "include": [

@@ -45,18 +45,31 @@ export default defineNuxtModule<ModuleOptions>({
       });
     });
     
-    // Make sure Logto module is added
+    // DEPENDENCIES CHECK
+    console.log('[Pincast] Checking SDK dependencies...');
+    
+    // Make sure required modules are added
     const modules = nuxt.options.modules as string[];
     
-    if (!modules.includes('@logto/nuxt')) {
-      console.warn('[Pincast] @logto/nuxt module not found. Adding it automatically.');
-      modules.push('@logto/nuxt');
+    // Check for Pinia
+    if (!modules.includes('@pinia/nuxt')) {
+      console.warn('[Pincast] WARNING: @pinia/nuxt module not found. Adding it automatically.');
+      modules.push('@pinia/nuxt');
+      console.log('[Pincast] ✅ Added Pinia to modules list');
+    } else {
+      console.log('[Pincast] ✅ Found @pinia/nuxt module');
     }
     
-    if (!modules.includes('@pinia/nuxt')) {
-      console.warn('[Pincast] @pinia/nuxt module not found. Adding it automatically.');
-      modules.push('@pinia/nuxt');
+    // Check for Logto
+    if (!modules.includes('@logto/nuxt')) {
+      console.warn('[Pincast] WARNING: @logto/nuxt module not found. Adding it automatically.');
+      modules.push('@logto/nuxt');
+      console.log('[Pincast] ✅ Added Logto to modules list');
+    } else {
+      console.log('[Pincast] ✅ Found @logto/nuxt module');
     }
+    
+    console.log('[Pincast] Dependencies check complete. SDK will use available modules.')
     
     // Set public runtime config for API base URL and defaults
     nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || {};

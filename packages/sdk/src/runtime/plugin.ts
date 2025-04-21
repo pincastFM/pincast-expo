@@ -8,18 +8,11 @@ import type { PincastPlugin } from '../types';
 
 // Ensure Pinia is installed
 const ensurePinia = async (nuxtApp: any) => {
-  if (!nuxtApp._pinia) {
-    try {
-      // Try to import and install Pinia dynamically
-      const { createPinia, setActivePinia } = await import('pinia');
-      const pinia = createPinia();
-      nuxtApp.vueApp.use(pinia);
-      setActivePinia(pinia);
-      console.info('[Pincast] Pinia initialized automatically');
-    } catch (error) {
-      console.warn('[Pincast] Failed to initialize Pinia:', error);
-      console.warn('[Pincast] Please install Pinia manually: npm install pinia @pinia/nuxt');
-    }
+  // Skip Pinia initialization - we'll rely on the @pinia/nuxt module
+  // Which should have been added to the modules in nuxt.config.ts
+  if (!nuxtApp.$pinia) {
+    console.warn('[Pincast] Pinia not found. Make sure @pinia/nuxt is installed and configured.');
+    console.warn('[Pincast] Some features might not work correctly.');
   }
 };
 
@@ -72,14 +65,26 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
   // Initialize the data client
   const data = createPincastClient(apiBase);
   
-  // Get Logto from nuxtApp
-  const logto = nuxtApp.$logto;
-  
-  if (!logto) {
-    console.warn('[Pincast] Logto plugin not found. Authentication will not work properly.');
+  // Get Logto from nuxtApp - handle gracefully if not available
+  let logto = null;
+  try {
+    logto = nuxtApp.$logto;
+    
+    // Check if Logto is properly initialized
+    if (!logto) {
+      // Show warning in development but not in production
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('[Pincast] Logto plugin not found. Authentication will require manual setup.');
+        console.warn('[Pincast] Add @logto/nuxt to your nuxt.config.ts modules.');
+      }
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[Pincast] Error accessing Logto:', error);
+    }
   }
   
-  // Initialize the auth module with Logto
+  // Initialize the auth module with Logto (will handle null gracefully)
   initAuth(logto, nuxtApp);
   
   // Initialize the data client
@@ -212,8 +217,16 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
   
   
   // Provide the Pincast object to the application
-  nuxtApp.provide('pincast', pincast);
+  // Only try to register once using either method
+  try {
+    if (!nuxtApp.hasOwnProperty('$pincast')) {
+      nuxtApp.provide('pincast', pincast);
+    }
+  } catch (error) {
+    console.warn('[Pincast] Unable to provide pincast via nuxtApp.provide:', error);
+  }
   
+  // Return the provide object, which is the safer approach
   return {
     provide: {
       pincast

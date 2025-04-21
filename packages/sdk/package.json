@@ -28,6 +28,7 @@
     "dist"
   ],
   "scripts": {
+    "prebuild": "node -e \"console.log('📂 cwd:', process.cwd()); ['src/index.ts','src/module.ts','src/runtime/plugin.ts'].forEach(f=>console.log(f, require('fs').existsSync(f)));\"",
     "build": "tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean",
     "dev": "tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean --watch",
     "lint": "eslint . --ext .ts,.tsx",
@@ -54,6 +55,7 @@
     "@types/node": "^20.17.30",
     "eslint": "latest",
     "msw": "^2.2.11",
+    "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.0",

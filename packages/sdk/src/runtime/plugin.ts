@@ -54,7 +54,25 @@ const defaultIdentify = (id: string, traits?: Record<string, any>) => {
   return Promise.resolve(true);
 };
 
+// Create a Singleton for consistency
+let pincastInstance: PincastPlugin | null = null;
+
+// First plugin: Initialization only - runs in client mode
 export default defineNuxtPlugin(async (nuxtApp: any) => {
+  // Check if instance already exists (prevents re-initialization)
+  if (pincastInstance) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[Pincast] Using existing instance');
+    }
+    
+    // Return without providing to avoid conflicts
+    return {};
+  }
+  
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[Pincast] Initializing SDK...');
+  }
+  
   // Ensure Pinia is available
   await ensurePinia(nuxtApp);
   
@@ -75,12 +93,11 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
       // Show warning in development but not in production
       if (process.env.NODE_ENV !== 'production') {
         console.warn('[Pincast] Logto plugin not found. Authentication will require manual setup.');
-        console.warn('[Pincast] Add @logto/nuxt to your nuxt.config.ts modules.');
       }
     }
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('[Pincast] Error accessing Logto:', error);
+      console.warn('[Pincast] Error accessing Logto');
     }
   }
   
@@ -215,21 +232,43 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
     }
   );
   
+  // Store the instance for reuse
+  pincastInstance = pincast;
   
-  // Provide the Pincast object to the application
-  // Only try to register once using either method
-  try {
-    if (!nuxtApp.hasOwnProperty('$pincast')) {
-      nuxtApp.provide('pincast', pincast);
-    }
-  } catch (error) {
-    console.warn('[Pincast] Unable to provide pincast via nuxtApp.provide:', error);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[Pincast] SDK initialized successfully');
   }
   
-  // Return the provide object, which is the safer approach
+  // Don't provide anything here to avoid redefinition
+  return {};
+});
+
+// Second plugin: Provider only - will run after initialization
+export const pincastProvider = defineNuxtPlugin((nuxtApp) => {
+  // Return the instance created in the first plugin
+  if (!pincastInstance) {
+    console.warn('[Pincast] SDK not initialized properly');
+    
+    // Create a dummy instance to prevent errors
+    pincastInstance = {
+      auth: {
+        signIn: async () => { throw new Error('SDK not initialized'); },
+        signOut: async () => { throw new Error('SDK not initialized'); },
+        getToken: async () => null,
+        getSession: async () => ({ id: '', email: null, role: 'player', isAuthenticated: false })
+      },
+      data: () => ({ getAll: async () => [], getOne: async () => null, create: async () => null, update: async () => null, remove: async () => null }),
+      analytics: {
+        track: () => Promise.resolve(false),
+        identify: () => Promise.resolve(false)
+      }
+    };
+  }
+  
+  // Only return the provide object without trying to call nuxtApp.provide
   return {
     provide: {
-      pincast
+      pincast: pincastInstance
     }
   };
 });

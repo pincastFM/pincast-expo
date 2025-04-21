@@ -25,10 +25,21 @@ export default defineNuxtModule<ModuleOptions>({
     // Note: runtimeDir is currently unused but may be needed for future extensions
     // const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url));
     
-    // Add the Pincast plugin
+    // Add the Pincast plugins in the correct order
+    // First plugin initializes the SDK but doesn't provide anything
     addPlugin({
       src: resolve('./runtime/plugin'),
-      mode: 'client'
+      mode: 'client',
+      order: 10 // Lower number = higher priority
+    });
+    
+    // Second plugin provides the instance but doesn't initialize
+    addPlugin({
+      src: resolve('./runtime/plugin'),
+      name: 'pincast-provider-plugin',
+      mode: 'client',
+      order: 90, // Run later in the plugin sequence
+      export: 'pincastProvider'
     });
     
     // Choose just one auto-import approach to avoid duplication warnings

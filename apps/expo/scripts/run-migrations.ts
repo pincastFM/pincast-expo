@@ -42,15 +42,30 @@ async function runMigration() {
         if (!statement.trim()) continue;
         
         const fullStatement = 'CREATE ' + statement.trim();
+        const preview = fullStatement.length > 50 
+          ? fullStatement.substring(0, 50) + '...' 
+          : fullStatement;
+          
         try {
           await sql.query(fullStatement);
-          const preview = fullStatement.length > 50 
-            ? fullStatement.substring(0, 50) + '...' 
-            : fullStatement;
           console.log(`✅ Executed: ${preview}`);
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
-          console.warn(`⚠️ Statement failed (may already exist): ${errorMessage}`);
+          // Better error handling for various error formats
+          let errorMessage;
+          if (error instanceof Error) {
+            errorMessage = error.message;
+          } else if (typeof error === 'object' && error !== null) {
+            errorMessage = JSON.stringify(error); // Properly stringify object errors
+          } else {
+            errorMessage = String(error);
+          }
+          
+          // Check for common PostgreSQL error codes indicating "relation already exists"
+          if (errorMessage.includes('already exists') || errorMessage.includes('duplicate key')) {
+            console.log(`ℹ️ Skipped (already exists): ${preview.substring(0, 30)}...`);
+          } else {
+            console.warn(`⚠️ Statement failed: ${errorMessage}`);
+          }
         }
       }
     }
@@ -62,12 +77,30 @@ async function runMigration() {
       const result = await sql`SELECT PostGIS_version()`;
       console.log(`✅ PostGIS is available: ${result.rows[0]?.postgis_version}`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error('❌ PostGIS is not available:', errorMessage);
+      // Handle various error formats
+      let errorMessage;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        errorMessage = JSON.stringify(error); // Properly stringify object errors
+      } else {
+        errorMessage = String(error);
+      }
+      // This is non-fatal for our pipeline, log a warning instead of error
+      console.log(`⚠️ PostGIS check failed: ${errorMessage}`);
+      console.log('⚠️ This is not a critical error, continuing with basic functionality.');
     }
     
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    // Better error handling for various error formats
+    let errorMessage;
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'object' && error !== null) {
+      errorMessage = JSON.stringify(error); // Properly stringify object errors
+    } else {
+      errorMessage = String(error);
+    }
     console.error('❌ Migration failed:', errorMessage);
     process.exit(1);
   }

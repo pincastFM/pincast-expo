@@ -18,8 +18,9 @@ export default defineNuxtConfig({
   // Use standard Vercel preset for better Node.js compatibility
   nitro: {
     preset: 'vercel',
-    // Explicitly set Node.js version compatibility
-    nodeCompatibility: true
+    // Configure server options for better compatibility
+    serveStatic: true,
+    compressPublicAssets: true
   },
 
   // Logto configuration

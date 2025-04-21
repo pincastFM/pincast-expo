@@ -7,7 +7,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "lint": "eslint --config eslint.config.js .",
+    "lint": "NODE_OPTIONS=--experimental-vm-modules eslint --config eslint.config.js .",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -73,7 +73,7 @@
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
-      "eslint --config eslint.config.js --fix",
+      "NODE_OPTIONS=--experimental-vm-modules eslint --config eslint.config.js --fix",
       "prettier --write"
     ]
   }

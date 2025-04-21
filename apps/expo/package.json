@@ -2,6 +2,9 @@
   "name": "expo",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -17,13 +20,23 @@
     "cypress:install": "cypress install",
     "cypress:verify": "cypress verify",
     "db:generate": "drizzle-kit generate:pg",
-    "db:migrate": "ts-node -T scripts/run-migrations.ts",
+    "db:migrate": "node --loader ts-node/esm scripts/run-migrations.ts",
+    "db:migrate:dev": "NODE_ENV=development node --loader ts-node/esm scripts/run-migrations.ts",
+    "db:migrate:prod": "NODE_ENV=production node --loader ts-node/esm scripts/run-migrations.ts",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "ts-node -T server/seed.ts"
+    "db:studio:dev": "NODE_ENV=development drizzle-kit studio",
+    "db:studio:prod": "NODE_ENV=production drizzle-kit studio",
+    "db:seed": "node --loader ts-node/esm server/seed.ts",
+    "db:seed:dev": "NODE_ENV=development node --loader ts-node/esm server/seed.ts",
+    "db:seed:prod": "NODE_ENV=production node --loader ts-node/esm server/seed.ts",
+    "db:check": "node --loader ts-node/esm scripts/check-db.ts",
+    "db:check:dev": "NODE_ENV=development node --loader ts-node/esm scripts/check-db.ts",
+    "db:check:prod": "NODE_ENV=production node --loader ts-node/esm scripts/check-db.ts"
   },
   "dependencies": {
     "@logto/nuxt": "^1.2.3",
     "@logto/vue": "^3.0.6",
+    "@pincast/sdk": "workspace:*",
     "@pinia/nuxt": "latest",
     "@types/pg": "^8.11.13",
     "@vercel/postgres": "latest",

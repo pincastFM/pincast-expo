@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as h3 from 'h3';
 import ingestHandler from '~/server/api/ingest.post';
 import * as jwt from '~/server/utils/jwt';
-import * as queries from '~/server/db/queries';
+import dbQueries from '~/server/db/queries';
 import { createMockH3Event } from '~/test/utils/mocks';
 
 // Mock dependencies
@@ -12,7 +12,9 @@ vi.mock('~/server/utils/jwt', () => ({
 }));
 
 vi.mock('~/server/db/queries', () => ({
-  recordAnalyticsEvent: vi.fn()
+  default: {
+    recordAnalyticsEvent: vi.fn()
+  }
 }));
 
 // Properly mock h3 methods
@@ -78,7 +80,7 @@ describe('POST /api/ingest', () => {
     
     // Assert
     expect(jwt.verifyJwt).toHaveBeenCalledWith('valid-token');
-    expect(queries.recordAnalyticsEvent).toHaveBeenCalledWith({
+    expect(dbQueries.recordAnalyticsEvent).toHaveBeenCalledWith({
       appId,
       userId,
       event: 'test_event',
@@ -106,7 +108,7 @@ describe('POST /api/ingest', () => {
     
     // Act & Assert
     await expect(ingestHandler(event)).rejects.toThrow('Authentication token is required');
-    expect(queries.recordAnalyticsEvent).not.toHaveBeenCalled();
+    expect(dbQueries.recordAnalyticsEvent).not.toHaveBeenCalled();
   });
 
   it('should reject invalid tokens', async () => {
@@ -128,7 +130,7 @@ describe('POST /api/ingest', () => {
     
     // Act & Assert
     await expect(ingestHandler(event)).rejects.toThrow('Invalid or expired token');
-    expect(queries.recordAnalyticsEvent).not.toHaveBeenCalled();
+    expect(dbQueries.recordAnalyticsEvent).not.toHaveBeenCalled();
   });
 
   it('should reject tokens with invalid audience format', async () => {
@@ -153,7 +155,7 @@ describe('POST /api/ingest', () => {
     
     // Act & Assert
     await expect(ingestHandler(event)).rejects.toThrow('Token not authorized for app access');
-    expect(queries.recordAnalyticsEvent).not.toHaveBeenCalled();
+    expect(dbQueries.recordAnalyticsEvent).not.toHaveBeenCalled();
   });
 
   it('should validate request body schema', async () => {
@@ -189,6 +191,6 @@ describe('POST /api/ingest', () => {
     
     // Act & Assert
     await expect(ingestHandler(event)).rejects.toThrow('Validation error');
-    expect(queries.recordAnalyticsEvent).not.toHaveBeenCalled();
+    expect(dbQueries.recordAnalyticsEvent).not.toHaveBeenCalled();
   });
 });

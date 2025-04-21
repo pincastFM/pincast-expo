@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "files": [
+    "./src/index.ts",
+    "./src/module.ts",
+    "./src/runtime/plugin.ts",
+    "./src/runtime/client.ts",
+    "./src/runtime/token.ts",
+    "./src/types.ts",
+    "./src/utils/proxy.ts",
+    "./src/composables/index.ts",
+    "./src/composables/usePincastAnalytics.ts",
+    "./src/composables/usePincastAuth.ts",
+    "./src/composables/usePincastData.ts",
+    "./src/composables/usePincastLocation.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
+}

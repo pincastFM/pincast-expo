@@ -1,0 +1,38 @@
+{
+  "name": "pincast-starter-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@pincast/sdk": "latest",
+    "mapbox-gl": "^3.0.0",
+    "pinia": "^2.1.0",
+    "@pinia/nuxt": "^0.5.0",
+    "vue": "^3.3.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@types/mapbox-gl": "^2.7.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-nuxt": "^4.0.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "nuxt": "^3.7.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify, decodeJwt as joseDecodeJwt } from 'jose';
-import { getRuntime } from './runtime';
-import { assertString } from './runtime';
+// Direct imports from runtime to fix module resolution
+import { getRuntime, assertString } from './runtime';
 
 /**
  * Sign a JWT with the app's secret
@@ -81,3 +81,10 @@ export function decodeJwt(token: string): any {
     throw new Error('Invalid token format');
   }
 }
+
+// Add default export to fix imports
+export default {
+  signJwt,
+  verifyJwt,
+  decodeJwt
+};

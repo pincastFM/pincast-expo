@@ -1,0 +1,45 @@
+name: CI API Tests
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/expo/server/api/**'
+      - 'apps/expo/server/utils/**'
+      - 'apps/expo/test/api/**'
+      - 'apps/expo/test/utils/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'apps/expo/server/api/**'
+      - 'apps/expo/server/utils/**'
+      - 'apps/expo/test/api/**'
+      - 'apps/expo/test/utils/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Run tests with coverage
+      run: npx vitest run --coverage --dir apps/expo/test/api apps/expo/test/utils
+    
+    - name: Check coverage
+      run: |
+        COVERAGE=$(npx vitest run --coverage --dir apps/expo/test/api apps/expo/test/utils | grep -oP 'Statements\s+:\s+\K[0-9.]+' | head -1)
+        echo "Coverage: $COVERAGE%"
+        if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+          echo "Coverage below threshold: $COVERAGE% (required: 90%)"
+          exit 1
+        fi

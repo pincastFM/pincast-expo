@@ -118,6 +118,7 @@ Returns `{ "appId": "uuid", "dashboard": "https://expo.pincast.fm/dashboard/uuid
 - **Implementation verification**: Always check and prove that implementations work before completion.
 - **Documentation quality**: All documentation must have proper front matter with title and description, and all internal links must be valid.
 - **Clean commits**: Never add AI assistant branding, emoji, or co-author tags to commit messages. Keep messages concise and descriptive.
+- **Build environment verification**: Always check if build failures in CI/CD are due to missing files, configuration mismatches, or environment differences between development and production. Ensure all necessary files are committed and properly configured for the build environment.
 
 ---
 

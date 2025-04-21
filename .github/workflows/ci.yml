@@ -48,13 +48,21 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
     - name: Install dependencies
-      run: pnpm install
+      run: |
+        pnpm install
+        npm install -g typescript
       
     # Build SDK package before typecheck
     - name: Build SDK package
       run: |
         cd packages/sdk
+        echo "Working directory: $(pwd)"
+        echo "Checking for source files:"
+        ls -la src/
+        echo "Building SDK package with TypeScript compiler:"
         pnpm run build
+        echo "Build result - dist directory contents:"
+        ls -la dist || echo "No dist directory found"
     
     - name: Run linting
       run: pnpm lint

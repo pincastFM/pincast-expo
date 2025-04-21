@@ -1,0 +1,56 @@
+{
+  "name": "pincast",
+  "version": "0.1.0",
+  "description": "Pincast CLI tool for expo development",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "pincast": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "cac": "^6.7.14",
+    "chalk": "^5.3.0",
+    "cli-spinner": "^0.2.10",
+    "conf": "^12.0.0",
+    "cross-spawn": "^7.0.3",
+    "fs-extra": "^11.2.0",
+    "h3": "^1.9.0",
+    "kleur": "^4.1.5",
+    "node-fetch": "^3.3.2",
+    "open": "^10.0.3",
+    "ora": "^8.0.1",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.17.30",
+    "@types/prompts": "^2.4.9",
+    "eslint": "latest",
+    "msw": "^2.2.11",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vitest": "latest"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

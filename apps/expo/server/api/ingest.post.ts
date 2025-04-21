@@ -1,7 +1,7 @@
 import { defineEventHandler, readBody, getRequestHeader, H3Event } from 'h3';
 import { z } from 'zod';
 import { decodeJwt, verifyJwt } from '~/server/utils/jwt';
-import { recordAnalyticsEvent } from '~/server/db/queries';
+import dbQueries from '~/server/db/queries';
 
 // Event validation schema
 const analyticsEventSchema = z.object({
@@ -90,7 +90,7 @@ export default defineEventHandler(async (event) => {
     const timestamp = new Date();
     
     // Record the analytics event
-    await recordAnalyticsEvent({
+    await dbQueries.recordAnalyticsEvent({
       appId,
       userId,
       event: validatedBody.event,

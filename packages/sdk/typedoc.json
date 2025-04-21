@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src/index.ts"],
+  "out": "docs",
+  "json": "../docs/public/api/sdk.json",
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "plugin": ["typedoc-plugin-markdown"],
+  "theme": "markdown",
+  "readme": "none",
+  "name": "Pincast SDK",
+  "includeVersion": true,
+  "categorizeByGroup": true,
+  "githubPages": false,
+  "hideGenerator": true,
+  "disableSources": true
+}

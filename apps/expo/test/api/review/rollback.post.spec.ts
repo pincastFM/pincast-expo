@@ -1,19 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { verifyLogtoToken, extractBearerToken } from '~/server/utils/logto';
-import { getUserByLogtoId, updateAppState, recordAnalyticsEvent, getVersionsByAppId } from '~/server/db/queries';
+import logtoUtils from '~/server/utils/logto';
+import dbQueries from '~/server/db/queries';
+
+const { verifyLogtoToken, extractBearerToken } = logtoUtils;
+const { getUserByLogtoId, updateAppState, recordAnalyticsEvent, getVersionsByAppId } = dbQueries;
 
 // Mock imports
 vi.mock('~/server/utils/logto', () => ({
-  verifyLogtoToken: vi.fn(),
-  extractBearerToken: vi.fn(),
+  default: {
+    verifyLogtoToken: vi.fn().mockResolvedValue({ payload: { sub: 'user-123', role: 'staff' } }),
+    extractBearerToken: vi.fn().mockImplementation((header) => header ? 'valid-token' : null),
+    hasScope: vi.fn()
+  },
+  verifyLogtoToken: vi.fn().mockResolvedValue({ payload: { sub: 'user-123', role: 'staff' } }),
+  extractBearerToken: vi.fn().mockImplementation((header) => header ? 'valid-token' : null),
   hasScope: vi.fn()
 }));
 
 vi.mock('~/server/db/queries', () => ({
-  getUserByLogtoId: vi.fn(),
-  updateAppState: vi.fn(),
-  recordAnalyticsEvent: vi.fn(),
-  getVersionsByAppId: vi.fn()
+  default: {
+    getUserByLogtoId: vi.fn().mockResolvedValue({ id: 'user-123', email: 'test@example.com', role: 'staff' }),
+    updateAppState: vi.fn().mockResolvedValue({ id: 'app-123', state: 'approved' }),
+    recordAnalyticsEvent: vi.fn().mockResolvedValue({}),
+    getVersionsByAppId: vi.fn().mockResolvedValue([{ id: 'version-123', appId: 'app-123' }])
+  },
+  getUserByLogtoId: vi.fn().mockResolvedValue({ id: 'user-123', email: 'test@example.com', role: 'staff' }),
+  updateAppState: vi.fn().mockResolvedValue({ id: 'app-123', state: 'approved' }),
+  recordAnalyticsEvent: vi.fn().mockResolvedValue({}),
+  getVersionsByAppId: vi.fn().mockResolvedValue([{ id: 'version-123', appId: 'app-123' }])
 }));
 
 // Import our mock db utilities
@@ -52,7 +66,7 @@ vi.mock('h3', async () => {
 
 // Mock #imports for Nuxt-specific functions
 vi.mock('#imports', () => ({
-  defineEventHandler: (handler) => handler,
+  defineEventHandler: (handler: (event: any) => any) => handler,
   useRuntimeConfig: () => ({
     pincastJwtSecret: 'test-secret-that-is-at-least-32-chars-long'
   })
@@ -137,7 +151,7 @@ async function testHandlerRollback(event: any) {
     }
     
     // Find the target version to roll back to
-    const targetVersion = appVersions.find(v => v.id === versionId);
+    const targetVersion = appVersions.find((v: any) => v.id === versionId);
     
     if (!targetVersion) {
       throw createError({

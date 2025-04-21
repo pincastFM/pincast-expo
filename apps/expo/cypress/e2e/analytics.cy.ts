@@ -23,7 +23,7 @@ describe('Analytics and Popularity', () => {
     cy.get('.catalog-item').each(($item) => {
       cy.wrap($item).find('span.inline-flex')
         .should(($el) => {
-          expect($el.text()).to.satisfy((text) => 
+          expect($el.text()).to.satisfy((text: string) => 
             text.includes('plays this week') || text.includes('play this week')
           );
         });

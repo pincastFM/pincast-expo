@@ -15,9 +15,12 @@ export default defineNuxtConfig({
     mode: 'svg'
   },
 
-  // Set default runtime to edge
+  // Use standard Vercel preset for better Node.js compatibility
   nitro: {
-    preset: 'vercel-edge'
+    preset: 'vercel',
+    // Configure server options for better compatibility
+    serveStatic: true,
+    compressPublicAssets: true
   },
 
   // Logto configuration
@@ -47,10 +50,8 @@ export default defineNuxtConfig({
     }
   },
 
-  // Pincast SDK config
-  pincast: {
-    apiBase: process.env.PINCAST_API_URL || 'https://api.pincast.fm'
-  },
+  // SDK configuration is now handled by the module itself
+  // Public configuration is available via runtimeConfig.public.pincastApi
 
   typescript: {
     strict: true,

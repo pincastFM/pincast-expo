@@ -1,0 +1,17 @@
+{
+  "id": "app-001",
+  "title": "NYC Urban Adventure",
+  "slug": "nyc-urban-adventure",
+  "heroUrl": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9",
+  "ownerId": "user-001",
+  "ownerDisplayName": "NYCExplorer",
+  "buildUrl": "https://nyc-urban-adventure.pincast-apps.vercel.app/",
+  "geo": {
+    "longitude": -73.9857,
+    "latitude": 40.7484,
+    "radiusMeters": 2000
+  },
+  "semver": "1.2.0",
+  "state": "published",
+  "createdAt": "2025-03-15T10:24:00Z"
+}

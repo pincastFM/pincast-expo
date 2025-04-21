@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { verifyLogtoToken } from '../../../server/utils/logto';
-import { signJwt } from '../../../server/utils/jwt';
-import { getUserByLogtoId } from '../../../server/db/queries';
+import logtoUtils from '../../../server/utils/logto';
+import jwtUtils from '../../../server/utils/jwt';
+import dbQueries from '../../../server/db/queries';
+
+const { verifyLogtoToken } = logtoUtils;
+const { signJwt } = jwtUtils;
+const { getUserByLogtoId } = dbQueries;
 // DB is mocked separately
 
 // Mock the dependencies

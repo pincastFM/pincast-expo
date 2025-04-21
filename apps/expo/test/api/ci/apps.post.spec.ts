@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createApp, getAppBySlug, createVersion, getVersionsByAppId, getUserByLogtoId } from '../../../server/db/queries';
-import { verifyLogtoToken, extractBearerToken, hasScope } from '../../../server/utils/logto';
+import dbQueries from '../../../server/db/queries';
+import logtoUtils from '../../../server/utils/logto';
+
+const { createApp, getAppBySlug, createVersion, getVersionsByAppId, getUserByLogtoId } = dbQueries;
+const { verifyLogtoToken, extractBearerToken, hasScope } = logtoUtils;
 
 // Mock the dependencies
 vi.mock('../../../server/utils/logto', () => ({

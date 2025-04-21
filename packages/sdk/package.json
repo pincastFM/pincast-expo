@@ -25,7 +25,7 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "rm -rf dist && node ./check-files.js",
+    "prebuild": "rm -rf dist && node ./check-ci.js",
     "build": "tsc -p tsconfig.build.json",
     "build:explicit": "tsc -p tsconfig.build-explicit.json",
     "build:alt": "tsc --rootDir ./src --outDir ./dist --declaration ./src/index.ts ./src/module.ts ./src/runtime/plugin.ts",

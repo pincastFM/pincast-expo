@@ -25,10 +25,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Create a wrapper file for the provider plugin to avoid Nuxt.js specific imports at build time
     // This is a standard plugin file that Nuxt can import directly
     try {
-      console.log('[Pincast] Generating runtime plugin...');
-      
-      // Create plugins directory if it doesn't exist
-      const pluginDir = resolve('../runtime');
+      console.log('[Pincast] Registering runtime plugin...');
       
       // Using simple addPlugin approach
       addPlugin({
@@ -39,7 +36,7 @@ export default defineNuxtModule<ModuleOptions>({
       console.log('[Pincast] Plugin registered successfully');
       
     } catch (error) {
-      console.error('[Pincast] Failed to create runtime plugin:', error);
+      console.error('[Pincast] Failed to register runtime plugin:', error);
     }
     
     // Register composables for auto-import

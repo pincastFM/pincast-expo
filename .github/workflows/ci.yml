@@ -54,7 +54,7 @@ jobs:
     - name: Build SDK package
       run: |
         cd packages/sdk
-        npx tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format cjs,esm --clean
+        pnpm run build
     
     - name: Run linting
       run: pnpm lint

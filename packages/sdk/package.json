@@ -1,0 +1,58 @@
+{
+  "name": "@pincast/sdk",
+  "version": "0.1.0",
+  "description": "SDK for building Pincast Expo applications",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./nuxt": {
+      "types": "./dist/module.d.ts",
+      "import": "./dist/module.js"
+    },
+    "./runtime/plugin": {
+      "types": "./dist/runtime/plugin.d.ts",
+      "import": "./dist/runtime/plugin.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format esm --clean --sourcemap",
+    "dev": "npx tsup src/index.ts src/module.ts src/runtime/plugin.ts --dts --format esm --clean --sourcemap --watch",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm build",
+    "docs:generate": "typedoc --options typedoc.json"
+  },
+  "dependencies": {
+    "@logto/vue": "^3.0.6",
+    "@nuxt/kit": "^3.10.0",
+    "h3": "^1.9.0"
+  },
+  "peerDependencies": {
+    "@logto/nuxt": "^1.2.3",
+    "nuxt": "^3.10.0",
+    "pinia": "^3.0.0",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@nuxt/test-utils": "latest",
+    "@types/node": "^20.17.30",
+    "eslint": "latest",
+    "msw": "^2.2.11",
+    "typescript": "^5.4.5",
+    "typedoc": "^0.25.4",
+    "typedoc-plugin-markdown": "^3.17.0",
+    "vitest": "latest"
+  }
+}

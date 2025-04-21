@@ -3,7 +3,7 @@
 // A simple script to run tsup with individual arguments
 // This avoids any potential issues with argument parsing
 
-const { spawn } = require('child_process');
+import { spawn } from 'child_process';
 
 // Define the entry files separately to ensure they're passed as individual arguments
 const entryFiles = [

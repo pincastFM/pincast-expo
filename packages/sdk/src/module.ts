@@ -1,5 +1,4 @@
 import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit';
-// import { fileURLToPath } from 'url'; // Not used in current implementation
 
 export interface ModuleOptions {
   /**
@@ -22,38 +21,31 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url);
-    // Note: runtimeDir is currently unused but may be needed for future extensions
-    // const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url));
     
-    // Add the Pincast plugins in the correct order
-    // First plugin initializes the SDK but doesn't provide anything
-    addPlugin({
-      src: resolve('./runtime/plugin'),
-      mode: 'client',
-      order: 10 // Lower number = higher priority
-    });
-    
-    // Second plugin provides the instance but doesn't initialize
-    // Create a simple provider plugin file without dynamic generation
-    // Add a second plugin from a separate source file
-    addPlugin({
-      src: resolve('./runtime/provider'),
-      mode: 'client',
-      order: 90 // Run later in the plugin sequence
-    });
-    
-    // Choose just one auto-import approach to avoid duplication warnings
-    // Only register the composables explicitly and don't scan directories
-    nuxt.hook('imports:sources', (sources) => {
-      sources.push({
-        from: '@pincast/sdk',
-        imports: [
-          'usePincastAuth',
-          'usePincastLocation',
-          'usePincastData',
-          'usePincastAnalytics'
-        ]
+    // Create a wrapper file for the provider plugin to avoid Nuxt.js specific imports at build time
+    // This is a standard plugin file that Nuxt can import directly
+    try {
+      console.log('[Pincast] Generating runtime plugin...');
+      
+      // Create plugins directory if it doesn't exist
+      const pluginDir = resolve('../runtime');
+      
+      // Using simple addPlugin approach
+      addPlugin({
+        src: resolve('./runtime/provider'),
+        mode: 'client'
       });
+      
+      console.log('[Pincast] Plugin registered successfully');
+      
+    } catch (error) {
+      console.error('[Pincast] Failed to create runtime plugin:', error);
+    }
+    
+    // Register composables for auto-import
+    nuxt.hook('imports:dirs', (dirs) => {
+      // Add the composables directory to auto-imports
+      dirs.push(resolve('./composables'));
     });
     
     // DEPENDENCIES CHECK

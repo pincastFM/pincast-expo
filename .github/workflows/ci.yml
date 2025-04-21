@@ -52,7 +52,7 @@ jobs:
       
     # Build SDK first to make it available for typecheck
     - name: Build SDK package
-      run: cd packages/sdk && pnpm build
+      run: pnpm --filter @pincast/sdk build
     
     - name: Run linting
       run: pnpm lint

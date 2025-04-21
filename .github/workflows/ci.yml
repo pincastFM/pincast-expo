@@ -53,70 +53,16 @@ jobs:
         npm install -g typescript
       
     # Build SDK package before typecheck
-    - name: Check SDK directory structure
-      run: |
-        echo "Current directory: $(pwd)"
-        echo "Listing packages directory to understand structure:"
-        find packages -type d -maxdepth 2 | sort
-        echo "Checking SDK package src directory directly:"
-        ls -la packages/sdk/src || echo "packages/sdk/src does not exist or cannot be accessed"
-        
-        echo "Checking if pnpm workspace hoists or symlinks the SDK package:"
-        find . -name "sdk" -type d | grep -v "node_modules"
-        
-        # Check if the package is a virtual symlink
-        echo "Checking if pnpm creates virtual packages:"
-        find . -path "*/.pnpm/@pincast+sdk*" -type d | head
-    
-    # SDK build with improved diagnostics
     - name: Build SDK package
       run: |
         cd packages/sdk
         echo "Working directory: $(pwd)"
-        echo "Full direct path: $(realpath .)"
-        echo "Node version: $(node -v)"
-        echo "TypeScript version: $(tsc --version)"
-        
-        echo "Creating a physical copy of src directory to ensure it's accessible:"
-        # Sometimes pnpm may symlink directories in ways tsc can't follow
-        if [ -d "src" ]; then
-          # Create a physical copy at ./physical-src to ensure tsc can read it
-          mkdir -p physical-src
-          cp -r src/* physical-src/
-          echo "Created physical copy of src. Contents:"
-          ls -la physical-src/
-          
-          # Update tsconfig to use physical copy
-          sed -i 's/"include": \["src\/**\/\*"\]/"include": \["physical-src\/**\/\*"\]/g' tsconfig.build.json
-          sed -i 's/"rootDir": "src"/"rootDir": "physical-src"/g' tsconfig.build.json
-        fi
-        
-        echo "Running diagnostic script:"
-        pnpm run prebuild
-        
-        echo "Trying to build with adjusted config:"
-        tsc -p tsconfig.build.json || (
-          echo "Standard build failed, creating minimal dist to continue"
-          mkdir -p dist/runtime dist/composables dist/utils
-          echo 'export default {};' > dist/index.js
-          echo 'export {};' > dist/index.d.ts
-          echo 'export default {};' > dist/module.js
-          echo 'export {};' > dist/module.d.ts
-          echo 'export default {};' > dist/runtime/plugin.js
-          echo 'export {};' > dist/runtime/plugin.d.ts
-        )
-        
-        # Check if dist directory exists
-        if [ -d "dist" ]; then
-          echo "✅ Build successful! Dist directory contents:"
-          ls -la dist
-        else
-          echo "❌ Build failed - no dist directory created"
-          # Create a minimal dist to prevent later steps from failing
-          mkdir -p dist
-          echo "// Placeholder" > dist/index.js
-          echo "export {}" > dist/index.d.ts
-        fi
+        echo "Checking for source files:"
+        ls -la src/
+        echo "Building SDK package with TypeScript compiler:"
+        pnpm run build
+        echo "Build result - dist directory contents:"
+        ls -la dist || echo "No dist directory found"
     
     - name: Run linting
       run: pnpm lint

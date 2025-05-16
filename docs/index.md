@@ -12,7 +12,24 @@ description: Build and deploy location-based experiences with Cursor
 [![Downloads](https://img.shields.io/visual-studio-marketplace/d/pincast.expo)](https://marketplace.visualstudio.com/items?itemName=pincast.expo)
 [![Rating](https://img.shields.io/visual-studio-marketplace/r/pincast.expo)](https://marketplace.visualstudio.com/items?itemName=pincast.expo)
 
-## What is Pincast Expo for Cursor AI?
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Getting Started](#getting-started)
+3. [Core Concepts](#core-concepts)
+4. [API Reference](#api-reference)
+5. [Real-World Examples](#real-world-examples)
+6. [Advanced Features](#advanced-features)
+7. [Development Workflow](#development-workflow)
+8. [Best Practices](#best-practices)
+9. [Security & Privacy](#security--privacy)
+10. [Performance Optimization](#performance-optimization)
+11. [Troubleshooting](#troubleshooting)
+12. [Contributing](#contributing)
+
+## Introduction
+
+### What is Pincast Expo for Cursor AI?
 
 Pincast Expo is a powerful extension designed specifically for Cursor AI that enables developers to create immersive location-based experiences with the help of AI-powered code generation and real-time location services. By leveraging Cursor AI's advanced code understanding capabilities, Pincast Expo makes it easier than ever to build, test, and deploy location-aware applications.
 
@@ -23,31 +40,484 @@ Pincast Expo is a powerful extension designed specifically for Cursor AI that en
 - **Smart Debugging**: AI-assisted debugging for common location-based issues
 - **Intelligent Code Generation**: Generate boilerplate code for common location patterns
 
-## Quick Start with Cursor AI
+### Key Benefits
 
-```bash
-# 1. Install Cursor AI from https://cursor.sh
+1. **Rapid Development**
+   - AI-powered code completion
+   - Smart templates and snippets
+   - Automated boilerplate generation
+   - Intelligent refactoring suggestions
 
-# 2. Install the Pincast Expo extension from Cursor's marketplace
-⌘⇧P  »  Extensions: Install Extension  »  "Pincast Expo"
+2. **Enhanced Productivity**
+   - Context-aware code suggestions
+   - Automated error detection
+   - Smart documentation generation
+   - Integrated testing tools
 
-# 3. Enable Pincast in your project
-⌘⇧P  »  Pincast: Enable Expo
+3. **Improved Code Quality**
+   - AI-driven code reviews
+   - Automated best practice enforcement
+   - Smart error prevention
+   - Performance optimization suggestions
 
-# 4. Deploy your app
-pincast deploy
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm 8+
+- Cursor AI editor
+- Logto account for authentication
+- Basic understanding of TypeScript
+- Familiarity with Vue.js (optional)
+
+### Installation Steps
+
+1. **Install Cursor AI**
+   ```bash
+   # Download from https://cursor.sh
+   # Follow installation wizard
+   ```
+
+2. **Install Pincast Extension**
+   ```bash
+   # Via Command Palette
+   ⌘⇧P  »  Extensions: Install Extension  »  "Pincast Expo"
+   
+   # Or via CLI
+   cursor extension install pincast.expo
+   ```
+
+3. **Configure Project**
+   ```bash
+   # Initialize new project
+   pincast init my-app
+   
+   # Install dependencies
+   cd my-app
+   pnpm install
+   
+   # Configure environment
+   cp .env.example .env.pincast
+   ```
+
+### Project Structure
+
+```
+my-app/
+├── src/
+│   ├── components/
+│   │   ├── LocationAware/
+│   │   ├── Geofencing/
+│   │   └── Analytics/
+│   ├── composables/
+│   │   ├── useLocation.ts
+│   │   ├── useGeofence.ts
+│   │   └── useAnalytics.ts
+│   ├── types/
+│   │   └── location.ts
+│   └── utils/
+│       └── geo.ts
+├── tests/
+│   ├── unit/
+│   └── e2e/
+├── .env.pincast
+├── pincast.json
+└── package.json
 ```
 
-## Features
+## Core Concepts
 
-- 🤖 **AI-Powered Development**: Seamless integration with Cursor AI's code generation capabilities
-- 🌍 **Location-Based Development**: Build experiences tied to real-world locations
-- 🚀 **Rapid Deployment**: Deploy directly from Cursor AI with a single command
-- 📱 **Cross-Platform**: Works seamlessly on iOS, Android, and web browsers
-- 🔒 **Built-in Auth**: Integrated authentication and authorization with Logto
-- 📊 **Analytics**: Automatic event tracking and custom analytics via Customer.io
-- 🗺️ **Geospatial Data**: PostGIS-powered location queries and storage
-- 🛠️ **Developer Tools**: Rich debugging and testing tools built into Cursor AI
+### Location Services
+
+#### Basic Location Tracking
+
+```typescript
+const { location, startWatching, stopWatching } = usePincastLocation({
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0
+});
+
+// Start tracking
+onMounted(() => {
+  startWatching();
+});
+
+// Clean up
+onUnmounted(() => {
+  stopWatching();
+});
+```
+
+#### Advanced Location Features
+
+```typescript
+const {
+  location,
+  heading,
+  speed,
+  altitude,
+  accuracy,
+  timestamp,
+  isTracking,
+  hasPermission,
+  requestPermission,
+  calculateDistance,
+  calculateBearing,
+  isWithinRadius
+} = usePincastLocation();
+
+// Monitor heading changes
+watch(() => heading.value, (newHeading) => {
+  updateCompass(newHeading);
+});
+
+// Calculate distances
+const distanceToTarget = calculateDistance(
+  location.value,
+  targetLocation,
+  'haversine' // or 'vincenty' for more accuracy
+);
+
+// Check if within range
+const isNearby = isWithinRadius(
+  location.value,
+  pointOfInterest,
+  100 // meters
+);
+```
+
+### Geofencing System
+
+#### Simple Geofence
+
+```typescript
+const { createGeofence, checkGeofence } = usePincastGeofence();
+
+// Create a circular geofence
+const fence = createGeofence({
+  id: 'store-entrance',
+  center: { lat: 40.7128, lng: -74.0060 },
+  radius: 50, // meters
+  onEnter: () => console.log('Entered store area'),
+  onExit: () => console.log('Left store area')
+});
+
+// Monitor geofence
+watch(() => location.value, () => {
+  checkGeofence(fence);
+});
+```
+
+#### Complex Geofencing
+
+```typescript
+const { createPolygonGeofence, createMultiGeofence } = usePincastGeofence();
+
+// Create polygon geofence
+const parkBoundary = createPolygonGeofence({
+  id: 'central-park',
+  points: [
+    { lat: 40.7829, lng: -73.9654 },
+    { lat: 40.7735, lng: -73.9708 },
+    { lat: 40.7648, lng: -73.9577 },
+    { lat: 40.7681, lng: -73.9498 }
+  ],
+  events: {
+    onEnter: handleParkEntry,
+    onExit: handleParkExit,
+    onDwell: handleLongStay
+  }
+});
+
+// Create multi-geofence
+const storeNetwork = createMultiGeofence({
+  fences: [storeA, storeB, storeC],
+  logic: 'ANY', // or 'ALL' for multiple conditions
+  onMatch: handleStoreProximity
+});
+```
+
+### Data Management
+
+#### Basic Operations
+
+```typescript
+const { store, query, update, remove } = usePincastData('locations');
+
+// Store location
+await store({
+  id: 'poi-1',
+  name: 'Times Square',
+  location: { lat: 40.7580, lng: -73.9855 }
+});
+
+// Query nearby
+const nearby = await query({
+  near: currentLocation,
+  maxDistance: 1000,
+  limit: 10
+});
+
+// Update record
+await update('poi-1', {
+  lastVisited: new Date()
+});
+
+// Remove record
+await remove('poi-1');
+```
+
+#### Advanced Queries
+
+```typescript
+const { query, aggregate } = usePincastData('visits');
+
+// Complex spatial query
+const hotspots = await query({
+  where: {
+    category: 'restaurant',
+    rating: { $gte: 4 },
+    price: { $lte: 3 }
+  },
+  near: location.value,
+  maxDistance: 2000,
+  sort: {
+    distance: 'asc',
+    rating: 'desc'
+  },
+  limit: 20
+});
+
+// Aggregation
+const visitStats = await aggregate([
+  {
+    $match: {
+      timestamp: { $gte: lastWeek }
+    }
+  },
+  {
+    $group: {
+      _id: '$locationId',
+      visits: { $sum: 1 },
+      avgDuration: { $avg: '$duration' }
+    }
+  }
+]);
+```
+
+### Analytics Integration
+
+#### User Tracking
+
+```typescript
+const { identify, track, page } = usePincastAnalytics();
+
+// Identify user
+identify(user.id, {
+  email: user.email,
+  name: user.name,
+  plan: user.subscription,
+  firstSeen: new Date()
+});
+
+// Track events
+track('location_visited', {
+  locationId: poi.id,
+  category: poi.type,
+  timeSpent: duration,
+  actionsTaken: interactions
+});
+
+// Page views
+page('location_details', {
+  locationId: poi.id,
+  referrer: previousPage
+});
+```
+
+#### Advanced Analytics
+
+```typescript
+const {
+  trackBatch,
+  startSession,
+  endSession,
+  addProperties,
+  clearProperties
+} = usePincastAnalytics();
+
+// Batch tracking
+trackBatch([
+  {
+    event: 'route_started',
+    properties: { routeId, startPoint }
+  },
+  {
+    event: 'checkpoint_reached',
+    properties: { checkpointId, timestamp }
+  }
+]);
+
+// Session handling
+startSession({
+  deviceId,
+  platform,
+  osVersion,
+  appVersion
+});
+
+// Global properties
+addProperties({
+  region: userRegion,
+  language: userLanguage,
+  deviceType: deviceInfo
+});
+```
+
+## API Reference
+
+### Location API
+
+#### `usePincastLocation(options?: LocationOptions)`
+
+Options:
+```typescript
+interface LocationOptions {
+  enableHighAccuracy?: boolean;
+  timeout?: number;
+  maximumAge?: number;
+  watchInterval?: number;
+  backgroundTracking?: boolean;
+}
+```
+
+Returns:
+```typescript
+interface LocationAPI {
+  location: Ref<GeolocationCoordinates>;
+  heading: Ref<number>;
+  speed: Ref<number>;
+  accuracy: Ref<number>;
+  timestamp: Ref<number>;
+  error: Ref<GeolocationError | null>;
+  isWatching: Ref<boolean>;
+  hasPermission: Ref<boolean>;
+  
+  // Methods
+  getCurrentPosition(): Promise<GeolocationCoordinates>;
+  startWatching(options?: WatchOptions): void;
+  stopWatching(): void;
+  requestPermission(): Promise<PermissionStatus>;
+  
+  // Calculations
+  calculateDistance(start: Coordinates, end: Coordinates, method?: 'haversine' | 'vincenty'): number;
+  calculateBearing(start: Coordinates, end: Coordinates): number;
+  isWithinDistance(point: Coordinates, target: Coordinates, meters: number): boolean;
+}
+```
+
+### Geofencing API
+
+#### `usePincastGeofence(options?: GeofenceOptions)`
+
+Options:
+```typescript
+interface GeofenceOptions {
+  monitoring?: 'foreground' | 'background' | 'always';
+  updateInterval?: number;
+  batchUpdates?: boolean;
+  errorThreshold?: number;
+}
+```
+
+Returns:
+```typescript
+interface GeofenceAPI {
+  // Creation
+  createGeofence(config: CircularGeofenceConfig): Geofence;
+  createPolygonGeofence(config: PolygonGeofenceConfig): PolygonGeofence;
+  createMultiGeofence(config: MultiGeofenceConfig): MultiGeofence;
+  
+  // Monitoring
+  startMonitoring(fenceId: string): void;
+  stopMonitoring(fenceId: string): void;
+  checkGeofence(fence: Geofence): GeofenceStatus;
+  
+  // Events
+  onGeofenceEnter(handler: GeofenceEventHandler): void;
+  onGeofenceExit(handler: GeofenceEventHandler): void;
+  onGeofenceDwell(handler: GeofenceEventHandler): void;
+}
+```
+
+### Data API
+
+#### `usePincastData(collection: string, options?: DataOptions)`
+
+Options:
+```typescript
+interface DataOptions {
+  caching?: boolean;
+  cacheDuration?: number;
+  realtime?: boolean;
+  compression?: boolean;
+}
+```
+
+Returns:
+```typescript
+interface DataAPI {
+  // Basic CRUD
+  store(data: any): Promise<string>;
+  get(id: string): Promise<any>;
+  update(id: string, data: any): Promise<void>;
+  remove(id: string): Promise<void>;
+  
+  // Queries
+  query(params: QueryParams): Promise<any[]>;
+  aggregate(pipeline: AggregatePipeline[]): Promise<any[]>;
+  
+  // Real-time
+  subscribe(query: QueryParams, callback: SubscriptionCallback): Subscription;
+  unsubscribe(subscription: Subscription): void;
+}
+```
+
+### Analytics API
+
+#### `usePincastAnalytics(options?: AnalyticsOptions)`
+
+Options:
+```typescript
+interface AnalyticsOptions {
+  batchSize?: number;
+  flushInterval?: number;
+  samplingRate?: number;
+  errorHandling?: 'silent' | 'throw' | 'retry';
+}
+```
+
+Returns:
+```typescript
+interface AnalyticsAPI {
+  // User identification
+  identify(userId: string, traits?: UserTraits): void;
+  
+  // Event tracking
+  track(event: string, properties?: EventProperties): void;
+  trackBatch(events: TrackEvent[]): void;
+  
+  // Session management
+  startSession(metadata?: SessionMetadata): void;
+  endSession(): void;
+  
+  // Properties
+  addProperties(props: GlobalProperties): void;
+  clearProperties(): void;
+}
+```
 
 ## Real-World Examples
 
@@ -222,152 +692,337 @@ export function useARExperience() {
 }
 ```
 
-## Advanced Features with Cursor AI
+## Advanced Features
 
 ### AI-Powered Location Debugging
 
-Cursor AI can help identify and fix common location-based issues:
+#### Intelligent Error Detection
 
 ```typescript
-// Example of Cursor AI suggesting location accuracy improvements
-const { location, accuracy } = usePincastLocation({
-  enableHighAccuracy: true,  // Cursor AI: Recommended for precise location tracking
-  maxAge: 5000,             // Cursor AI: Adjust based on your use case
-  timeout: 10000            // Cursor AI: Increase for better accuracy
+const { enableAIDebugging } = usePincastDebugger();
+
+enableAIDebugging({
+  // AI will analyze these patterns
+  patterns: {
+    accuracy: {
+      threshold: 100, // meters
+      action: 'suggest_recalibration'
+    },
+    movement: {
+      minSpeed: 0.5, // m/s
+      maxSpeed: 30, // m/s
+      action: 'flag_anomaly'
+    },
+    battery: {
+      threshold: 0.15,
+      action: 'optimize_polling'
+    }
+  },
+  
+  // AI-powered error handlers
+  handlers: {
+    onAccuracyDrop: async (event) => {
+      const suggestion = await AI.analyzeProblem(event);
+      console.log(suggestion.fixes);
+    },
+    onAnomalousMovement: (event) => {
+      AI.suggestFiltering(event.data);
+    }
+  }
+});
+```
+
+#### Smart Testing
+
+```typescript
+const { createAITestScenario } = usePincastTesting();
+
+// AI generates realistic test scenarios
+const scenario = await createAITestScenario({
+  type: 'user_journey',
+  context: {
+    startPoint: { lat: 40.7829, lng: -73.9654 },
+    destination: { lat: 40.7580, lng: -73.9855 },
+    transportMode: 'walking',
+    timeOfDay: 'evening',
+    weather: 'rainy'
+  }
 });
 
-// Cursor AI can help implement smart error handling
-const handleLocationError = (error: GeolocationError) => {
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      // Cursor AI: Suggest enabling location services
-      break;
-    case error.POSITION_UNAVAILABLE:
-      // Cursor AI: Implement fallback positioning
-      break;
-    case error.TIMEOUT:
-      // Cursor AI: Retry with adjusted parameters
-      break;
+// Run AI-generated tests
+await scenario.run({
+  assertions: {
+    locationUpdates: true,
+    geofenceEvents: true,
+    batteryImpact: true
   }
-};
+});
 ```
 
-### Smart Geofencing with AI
+### Performance Optimization
 
-Leverage Cursor AI to generate optimal geofencing strategies:
+#### Adaptive Location Polling
 
 ```typescript
-// Cursor AI can help optimize geofence parameters
-const useSmartGeofence = (options: GeofenceOptions) => {
-  const { location } = usePincastLocation();
-  const { store } = usePincastData('geofence-events');
+const { createAdaptivePoller } = usePincastOptimization();
+
+const poller = createAdaptivePoller({
+  // AI tunes these parameters based on usage
+  baseInterval: 1000,
+  maxInterval: 30000,
+  minInterval: 500,
   
-  // Cursor AI suggests optimal buffer zones based on accuracy
-  const calculateBuffer = (accuracy: number) => {
-    return Math.max(accuracy * 1.5, options.minBuffer);
-  };
-  
-  // AI-powered geofence breach detection
-  const checkGeofenceBreach = (fence: Geofence) => {
-    const buffer = calculateBuffer(location.value.accuracy);
-    const distance = calculateDistance(location.value, fence.center);
-    
-    return {
-      isBreached: distance <= (fence.radius + buffer),
-      confidence: calculateConfidence(distance, buffer, fence.radius)
-    };
-  };
-  
-  return {
-    checkGeofenceBreach,
-    // ... more geofencing functionality
-  };
-};
+  // AI-powered adaptation rules
+  adaptationRules: {
+    battery: {
+      level: (battery) => battery < 0.2 ? 'increase_interval' : 'maintain',
+      temperature: (temp) => temp > 35 ? 'increase_interval' : 'maintain'
+    },
+    movement: {
+      speed: (speed) => speed > 10 ? 'decrease_interval' : 'maintain',
+      pattern: (pattern) => pattern === 'stationary' ? 'increase_interval' : 'maintain'
+    },
+    accuracy: {
+      required: (acc) => acc < 50 ? 'decrease_interval' : 'maintain'
+    }
+  }
+});
 ```
 
-## Development Workflow in Cursor AI
+#### Intelligent Caching
 
-1. **Initialize Project with AI Assistance**
-   ```bash
-   # Cursor AI will help set up your project structure
-   pincast init my-app
-   cd my-app
+```typescript
+const { createSmartCache } = usePincastOptimization();
+
+const cache = createSmartCache({
+  // AI-optimized caching strategies
+  strategies: {
+    locations: {
+      type: 'spatial',
+      radius: 1000, // meters
+      maxAge: 3600, // seconds
+      prefetch: true
+    },
+    routes: {
+      type: 'predictive',
+      confidence: 0.8,
+      maxPaths: 3
+    }
+  },
+  
+  // AI-driven prefetching
+  prefetchRules: {
+    onLocationChange: async (location) => {
+      const prediction = await AI.predictNextLocations(location);
+      await cache.prefetch(prediction.locations);
+    }
+  }
+});
+```
+
+### Security & Privacy
+
+#### Location Data Protection
+
+```typescript
+const { createPrivacyGuard } = usePincastSecurity();
+
+const guard = createPrivacyGuard({
+  // AI-powered privacy rules
+  rules: {
+    precision: {
+      default: 6, // decimal places
+      trusted: 8,
+      public: 4
+    },
+    exclusions: {
+      type: 'geometric',
+      shapes: [
+        {
+          type: 'circle',
+          center: homeLocation,
+          radius: 100
+        },
+        {
+          type: 'polygon',
+          points: workplaceArea
+        }
+      ]
+    }
+  },
+  
+  // AI-managed data lifecycle
+  retention: {
+    default: '30d',
+    sensitive: '7d',
+    temporary: '24h'
+  }
+});
+```
+
+#### Secure Data Transmission
+
+```typescript
+const { createSecureChannel } = usePincastSecurity();
+
+const channel = createSecureChannel({
+  // AI-optimized encryption
+  encryption: {
+    algorithm: 'AES-256-GCM',
+    keyRotation: '7d',
+    backup: true
+  },
+  
+  // AI-powered threat detection
+  monitoring: {
+    patterns: ['anomalous_access', 'data_exfiltration', 'replay_attacks'],
+    response: 'block_and_report'
+  }
+});
+```
+
+### Battery Efficiency
+
+#### Smart Background Mode
+
+```typescript
+const { createPowerManager } = usePincastOptimization();
+
+const powerManager = createPowerManager({
+  // AI-optimized power modes
+  modes: {
+    high: {
+      accuracy: 'best',
+      interval: 1000,
+      allowBackground: true
+    },
+    balanced: {
+      accuracy: 'medium',
+      interval: 5000,
+      allowBackground: true
+    },
+    low: {
+      accuracy: 'low',
+      interval: 30000,
+      allowBackground: false
+    }
+  },
+  
+  // AI-driven mode switching
+  switching: {
+    battery: (level) => level < 0.2 ? 'low' : level < 0.5 ? 'balanced' : 'high',
+    activity: (type) => type === 'stationary' ? 'low' : 'balanced',
+    time: (hour) => (hour >= 23 || hour <= 6) ? 'low' : 'balanced'
+  }
+});
+```
+
+## Best Practices
+
+### Location Accuracy
+
+1. **Use Appropriate Accuracy Levels**
+   ```typescript
+   const { location } = usePincastLocation({
+     enableHighAccuracy: true, // Only when needed
+     desiredAccuracy: {
+       navigation: 5,  // meters
+       tracking: 10,
+       region: 100
+     }
+   });
    ```
 
-2. **AI-Powered Configuration**
-   - Cursor AI helps configure `pincast.json` for optimal settings
-   - Suggests environment variables in `.env.pincast`
-
-3. **Develop with AI Support**
-   ```bash
-   # Start development server with AI-powered debugging
-   pincast dev
+2. **Implement Fallbacks**
+   ```typescript
+   const { createLocationFallback } = usePincastLocation();
+   
+   const fallback = createLocationFallback({
+     strategies: ['gps', 'network', 'ip', 'manual'],
+     timeout: 5000,
+     onFallback: (strategy) => console.log(`Using ${strategy}`)
+   });
    ```
 
-4. **AI-Assisted Testing**
-   - Use Cursor AI's built-in location simulator
-   - Test geofencing with AI-generated test scenarios
-   - Debug with AI-enhanced Chrome DevTools
+### Error Handling
 
-5. **Deploy with Confidence**
-   ```bash
-   # AI verifies deployment readiness
-   pincast deploy
+1. **Graceful Degradation**
+   ```typescript
+   const { createErrorHandler } = usePincastError();
+   
+   const handler = createErrorHandler({
+     strategies: {
+       PERMISSION_DENIED: () => requestPermissionWithContext(),
+       POSITION_UNAVAILABLE: () => useFallbackLocation(),
+       TIMEOUT: () => retryWithBackoff()
+     }
+   });
    ```
 
-## Best Practices (AI-Enhanced)
-
-1. **Location Accuracy**
-   - Use AI to determine optimal accuracy settings
-   - Implement smart fallbacks for poor GPS signals
-   - Balance accuracy with battery life
-
-2. **Performance Optimization**
-   - AI-powered background location updates
-   - Smart caching of location data
-   - Efficient geospatial queries
-
-3. **Battery Efficiency**
-   - AI-driven adaptive location polling
-   - Smart background mode handling
-   - Optimized geofencing calculations
-
-## Troubleshooting with AI
-
-### Common Issues
-
-1. **SDK Initialization Failed**
-   - AI-powered configuration verification
-   - Automatic dependency checking
-   - Smart environment validation
-
-2. **Location Services Error**
-   - AI-assisted permission debugging
-   - Device-specific troubleshooting
-   - Automatic error recovery suggestions
-
-3. **Deployment Issues**
-   - AI-powered deployment validation
-   - Automatic error detection
-   - Smart rollback suggestions
-
-### Support
-
-- [GitHub Issues](https://github.com/pincastfm/pincast-expo/issues)
-- [Documentation](https://docs.pincast.fm)
-- Email: support@pincast.fm
+2. **User Communication**
+   ```typescript
+   const { createUserNotifier } = usePincastUI();
+   
+   const notifier = createUserNotifier({
+     templates: {
+       accuracy_low: "Location accuracy is low. Please move to an open area.",
+       permission_needed: "This feature requires location access to work.",
+       background_restricted: "Background location access is needed for tracking."
+     }
+   });
+   ```
 
 ## Contributing
 
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create Pull Request
+### Development Setup
+
+1. **Clone Repository**
+   ```bash
+   git clone https://github.com/pincastfm/pincast-expo.git
+   cd pincast-expo
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Run Tests**
+   ```bash
+   pnpm test
+   pnpm test:e2e
+   ```
+
+### Contribution Guidelines
+
+1. **Code Style**
+   - Follow TypeScript best practices
+   - Use Vue.js Composition API
+   - Document all public APIs
+   - Write unit tests for new features
+
+2. **Pull Request Process**
+   - Create feature branch
+   - Add tests
+   - Update documentation
+   - Submit PR with description
+
+3. **Review Process**
+   - Code review by maintainers
+   - CI checks must pass
+   - Documentation must be updated
+   - Breaking changes must be noted
 
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details
+
+## Support
+
+- [GitHub Issues](https://github.com/pincastfm/pincast-expo/issues)
+- [Documentation](https://docs.pincast.fm)
+- [Discord Community](https://discord.gg/pincast)
+- Email: support@pincast.fm
 
 ---
 

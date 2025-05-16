@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+  <div class="bg-white rounded-md border border-primary shadow-primary overflow-hidden transition-all duration-300 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-card-hover">
     <div class="relative">
       <img 
         :src="app.heroUrl || '/images/default-app-hero.jpg'" 
@@ -9,7 +9,7 @@
       />
       <div class="absolute top-2 right-2">
         <span 
-          class="px-2 py-1 text-xs font-semibold rounded-full" 
+          class="px-2 py-1 text-xs font-mono font-semibold rounded-md border" 
           :class="stateClasses"
         >
           {{ app.state }}
@@ -17,25 +17,25 @@
       </div>
     </div>
     
-    <div class="p-4">
+    <div class="p-4 font-mono">
       <div class="flex justify-between items-start mb-2">
-        <h3 class="text-lg font-semibold text-gray-800 truncate">{{ app.title }}</h3>
-        <div v-if="app.isPaid" class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+        <h3 class="text-lg font-semibold text-primary truncate">{{ app.title }}</h3>
+        <div v-if="app.isPaid" class="text-xs font-semibold bg-primary-50 text-primary px-2 py-0.5 rounded-md border border-primary">
           ${{ (app.priceCents / 100).toFixed(2) }}
         </div>
       </div>
       
-      <div class="text-sm text-gray-500 mb-3">
+      <div class="text-sm mb-3">
         <div class="flex items-center mb-1">
-          <icon name="uil:user" class="mr-1 w-4 h-4" />
+          <icon name="uil:user" class="mr-1 w-4 h-4 text-primary" />
           <span>{{ app.owner?.email || 'Unknown developer' }}</span>
         </div>
         <div class="flex items-center mb-1">
-          <icon name="uil:calendar-alt" class="mr-1 w-4 h-4" />
+          <icon name="uil:calendar-alt" class="mr-1 w-4 h-4 text-primary" />
           <span>{{ formatDate(app.createdAt) }}</span>
         </div>
         <div v-if="app.latestVersion?.lighthouseScore" class="flex items-center">
-          <icon name="uil:tachometer-fast" class="mr-1 w-4 h-4" />
+          <icon name="uil:tachometer-fast" class="mr-1 w-4 h-4 text-primary" />
           <span>Score: {{ app.latestVersion.lighthouseScore }}</span>
         </div>
       </div>
@@ -65,15 +65,15 @@ const props = defineProps<AppCardProps>()
 const stateClasses = computed(() => {
   switch (props.app.state as AppState) {
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800'
+      return 'border-tertiary text-tertiary'
     case 'published':
-      return 'bg-green-100 text-green-800'
+      return 'border-primary text-primary'
     case 'rejected':
-      return 'bg-red-100 text-red-800'
+      return 'border-secondary text-secondary'
     case 'hidden':
-      return 'bg-gray-100 text-gray-800'
+      return 'border-gray-500 text-gray-500'
     default:
-      return 'bg-gray-100 text-gray-800'
+      return 'border-gray-500 text-gray-500'
   }
 })
 

@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md border border-primary text-center cursor-pointer transition-all font-semibold shadow-primary hover:shadow-primary-hover transform hover:-translate-y-1;
+  }
+
+  .btn-primary {
+    @apply border-primary bg-primary text-white hover:bg-white hover:text-primary;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-primary hover:bg-primary hover:text-white;
+  }
+
+  .btn-sm {
+    @apply text-sm py-1 px-3;
+  }
+
+  .btn-md {
+    @apply text-base py-1 px-4;
+  }
+
+  .btn-lg {
+    @apply text-lg py-1 px-6;
+  }
+
+  .card {
+    @apply bg-white rounded-md border border-primary shadow-primary p-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-card-hover;
+  }
+
+  .form-input {
+    @apply w-full py-2 px-3 rounded-md border border-primary text-primary font-mono focus:outline-none focus:ring-1 focus:ring-primary;
+  }
+
+  .form-label {
+    @apply block text-primary font-semibold font-mono mb-1;
+  }
+
+  .badge {
+    @apply px-2 py-1 text-xs rounded-md border font-mono font-semibold;
+  }
+
+  .badge-primary {
+    @apply border-primary text-primary;
+  }
+
+  .badge-secondary {
+    @apply border-secondary text-secondary;
+  }
+
+  .badge-tertiary {
+    @apply border-tertiary text-tertiary;
+  }
+}

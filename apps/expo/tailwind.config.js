@@ -1,39 +1,57 @@
 /**
- * Tailwind configuration that extends tokens from NuxtSitev1
+ * Tailwind configuration for Pincast Expo
+ * Based on the Pincaster style guide
  */
 export default {
   theme: {
     extend: {
-      // These values will be replaced with actual values from NuxtSitev1
       colors: {
         primary: {
-          DEFAULT: '#3B82F6',
-          50: '#EBF2FF',
-          100: '#D6E4FF',
-          200: '#ADC8FF',
-          300: '#85ADFF',
-          400: '#5C91FF',
-          500: '#3B82F6',
-          600: '#0A5AE2',
-          700: '#0747B3',
-          800: '#053585',
-          900: '#032056',
-          950: '#021843'
-        }
+          DEFAULT: 'hsl(153 100% 20%)',
+          50: 'hsl(153 100% 98%)',
+          100: 'hsl(153 100% 95%)',
+          200: 'hsl(153 100% 90%)',
+          300: 'hsl(153 100% 85%)',
+          400: 'hsl(153 100% 75%)',
+          500: 'hsl(153 100% 65%)',
+          600: 'hsl(153 100% 55%)',
+          700: 'hsl(153 100% 45%)',
+          800: 'hsl(153 100% 35%)',
+          900: 'hsl(153 100% 25%)',
+          950: 'hsl(153 100% 20%)'
+        },
+        secondary: 'hsl(333, 100%, 45%)',
+        tertiary: 'hsl(43, 100%, 50%)'
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace']
       },
-      borderRadius: {
-        'sm': '0.125rem',
-        DEFAULT: '0.25rem',
-        'md': '0.375rem',
-        'lg': '0.5rem',
-        'xl': '0.75rem',
-        '2xl': '1rem',
-        '3xl': '1.5rem',
-        'full': '9999px'
+      boxShadow: {
+        'primary': '4px 4px 0px 0px hsl(153 100% 20%)',
+        'primary-hover': '0px 0px 0px 0px rgba(79,153,153,0)',
+        'card-hover': '6px 6px 0px 0px hsl(153 100% 20%)'
+      },
+      backgroundImage: {
+        'grid-pattern': 'linear-gradient(to right, #80808012 1px, transparent 1px), linear-gradient(to bottom, #80808012 1px, transparent 1px)'
+      },
+      backgroundSize: {
+        'grid': '24px 24px'
+      },
+      animation: {
+        'pulse-custom': 'pulse 1.75s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'blink': 'blink 1s infinite step-start',
+        'flash': 'flash 0.5s ease-in-out'
+      },
+      keyframes: {
+        blink: {
+          '0%, 50%': { opacity: '1' },
+          '50.01%, 100%': { opacity: '0' }
+        },
+        flash: {
+          '0%, 100%': { backgroundColor: 'var(--primary)' },
+          '50%': { backgroundColor: 'var(--background)' }
+        }
       }
     }
   },

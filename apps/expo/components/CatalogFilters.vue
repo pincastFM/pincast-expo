@@ -1,19 +1,19 @@
 <template>
-  <div class="catalog-filters p-4 bg-white rounded-lg shadow mb-6">
+  <div class="catalog-filters p-4 bg-white border border-primary shadow-primary rounded-md mb-6 font-mono">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <!-- Sort Options -->
       <div class="flex items-center gap-2">
-        <span class="text-gray-700 font-medium">Sort by:</span>
+        <span class="text-primary font-semibold">Sort by:</span>
         <div class="flex gap-2">
           <button 
             v-for="option in sortOptions" 
             :key="option.value"
             @click="selectedSort = option.value"
             :class="[
-              'px-3 py-1 rounded-full text-sm font-medium',
+              'px-3 py-1 rounded-md text-sm font-semibold border transition-all',
               selectedSort === option.value 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-primary text-white border-primary' 
+                : 'bg-white text-primary border-primary hover:bg-primary-50'
             ]"
           >
             {{ option.label }}
@@ -26,7 +26,7 @@
         <button 
           v-if="selectedSort === 'distance'"
           @click="$emit('locate')"
-          class="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full text-sm font-medium transition-colors"
+          class="flex items-center gap-1 px-3 py-1 bg-white border border-primary text-primary hover:bg-primary-50 rounded-md text-sm font-semibold transition-all"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -36,11 +36,11 @@
         </button>
         
         <div class="flex items-center gap-2" v-if="selectedSort === 'distance' && hasLocation">
-          <label for="radius" class="text-sm text-gray-700">Radius:</label>
+          <label for="radius" class="text-sm text-primary font-semibold">Radius:</label>
           <select 
             id="radius" 
             v-model="radius"
-            class="py-1 px-2 border border-gray-300 rounded-md text-sm"
+            class="py-1 px-2 border border-primary rounded-md text-sm bg-white text-primary font-mono focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option v-for="r in radiusOptions" :key="r.value" :value="r.value">{{ r.label }}</option>
           </select>

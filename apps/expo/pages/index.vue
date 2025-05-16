@@ -8,12 +8,12 @@
         A marketplace for vibe-coding location-based applications
       </p>
       <div class="flex space-x-4">
-        <button class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition">
+        <NuxtLink to="/browse" class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition">
           Browse Apps
-        </button>
-        <button class="px-4 py-2 border border-primary-500 text-primary-500 rounded hover:bg-primary-50 transition">
+        </NuxtLink>
+        <NuxtLink to="/submit" class="px-4 py-2 border border-primary-500 text-primary-500 rounded hover:bg-primary-50 transition">
           Developer Portal
-        </button>
+        </NuxtLink>
       </div>
     </div>
   </div>

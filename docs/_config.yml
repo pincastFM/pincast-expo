@@ -1,0 +1,30 @@
+theme: jekyll-theme-minimal
+title: Pincast Expo Cursor Extension
+description: Build and deploy location-based experiences with Cursor
+logo: /assets/img/logo.png
+show_downloads: false
+
+# Navigation
+nav:
+  - title: Getting Started
+    url: /#getting-started
+  - title: API Reference
+    url: /#api-reference
+  - title: Examples
+    url: /#examples
+  - title: Support
+    url: /#support
+
+# Theme customization
+colors:
+  header: "#159957"
+  gradient_left: "#155799"
+  gradient_right: "#159957"
+
+# Theme customization
+github:
+  is_project_page: true
+  repository_url: https://github.com/pincastfm/pincast-expo
+  repository_name: pincast-expo
+  owner_url: https://github.com/pincastfm
+  owner_name: Pincast 

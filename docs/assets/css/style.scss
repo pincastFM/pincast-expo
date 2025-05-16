@@ -1,0 +1,242 @@
+@import "{{ site.theme }}";
+
+/* Variables */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  --color-text: #24292e;
+  --color-bg: #ffffff;
+  --color-link: #0366d6;
+  --color-border: #e1e4e8;
+  --color-header-bg: #f6f8fa;
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: 16px;
+  background: var(--color-bg);
+}
+
+/* Layout */
+.wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+header {
+  background: var(--color-header-bg);
+  padding: 20px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Navigation */
+nav {
+  margin: 20px 0;
+  
+  a {
+    color: var(--color-text);
+    text-decoration: none;
+    margin-right: 20px;
+    
+    &:hover {
+      color: var(--color-link);
+    }
+  }
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.3em;
+}
+
+/* Code blocks */
+pre, code {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  background: var(--color-header-bg);
+  border-radius: 6px;
+}
+
+pre {
+  padding: 16px;
+  overflow: auto;
+  line-height: 1.45;
+}
+
+code {
+  padding: 0.2em 0.4em;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+}
+
+th, td {
+  padding: 6px 13px;
+  border: 1px solid var(--color-border);
+}
+
+th {
+  font-weight: 600;
+  background: var(--color-header-bg);
+}
+
+/* Links */
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Lists */
+ul, ol {
+  padding-left: 2em;
+}
+
+li {
+  margin: 0.25em 0;
+}
+
+/* Blockquotes */
+blockquote {
+  margin: 16px 0;
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid var(--color-border);
+}
+
+/* Horizontal rule */
+hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: var(--color-border);
+  border: 0;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* API method blocks */
+.api-method {
+  background: var(--color-header-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+/* Parameter tables */
+.params-table {
+  th:first-child {
+    width: 180px;
+  }
+  
+  th:nth-child(2) {
+    width: 120px;
+  }
+}
+
+/* Response examples */
+.response-example {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.page-header {
+  background: var(--primary-color);
+  background: linear-gradient(120deg, var(--primary-color), darken(var(--primary-color), 10%));
+}
+
+.main-content {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+}
+
+.btn {
+  background-color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  box-shadow: 4px 4px 0px 0px var(--primary-color);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: var(--background);
+    color: var(--primary-color);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px var(--primary-color);
+  }
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background-color: var(--primary-active);
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+}
+
+pre {
+  background-color: var(--primary-active);
+  border: 1px solid var(--primary-color);
+  box-shadow: 4px 4px 0px 0px var(--primary-color);
+}
+
+table {
+  border: 1px solid var(--primary-color);
+  
+  th, td {
+    border: 1px solid var(--primary-color);
+  }
+  
+  th {
+    background-color: var(--primary-color);
+    color: var(--background);
+  }
+}
+
+.site-footer {
+  border-top: 1px solid var(--primary-color);
+  margin-top: 2rem;
+  padding-top: 2rem;
+}
+
+// Grid background
+.main-content {
+  background-image: linear-gradient(to right, #80808012 1px, transparent 1px),
+                    linear-gradient(to bottom, #80808012 1px, transparent 1px);
+  background-size: 24px 24px;
+} 
